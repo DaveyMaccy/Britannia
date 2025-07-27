@@ -207,67 +207,14 @@
             return (item && typeof item === 'object' && !Array.isArray(item));
         }
 
-        function parseScenario(text) {
-            const skillsMatch = text.match(/## 4\. Available Skills\n([\s\S]*?)\n##/);
-            const skills = skillsMatch ? skillsMatch[1].split('\n').map(s => s.replace(/[\*\-]\s/g, '').trim()).filter(Boolean) : [];
-
-            const situationMatch = text.match(/## 8\. Starting Situations\n([\s\S]*?)\n##/);
-            const situations = {};
-            if(situationMatch) {
-                situationMatch[1].split('- ').forEach(part => {
-                    if(part.trim()){
-                        const [key, ...value] = part.split(':');
-                        situations[key.trim()] = value.join(':').trim().replace(/\n/g, '<p>');
-                    }
-                });
-            }
-
-            const gearMatch = text.match(/## 5\. Starting Gear Options\n([\s\S]*?)\n##/);
-            const startingGear = {};
-            if(gearMatch){
-                gearMatch[1].split('- ').forEach(part => {
-                    if(part.trim()){
-                        const [category, items] = part.split(':');
-                        startingGear[category.trim()] = items.split(',').map(i => i.trim());
-                    }
-                });
-            }
-            
-            const gameStateTemplate = {
-                turnCounter: 1,
-                characterSheet: {
-                    name: "", physicalDescription: "", health: "Healthy", survivalStatus: "Sated, Hydrated, Warm",
-                    attributes: { STR: 0, DEX: 0, WITS: 0, CHA: 0 },
-                    skills: {},
-                    languages: { "Common Brittonic": 100, "Vulgar Latin": 100 },
-                    inventory: { currency: 0, items: [] },
-                    location: "Parisi Territory",
-                    factionReputation: { "Roman Province": 0, "Roman Auxilia": 0, "Merchants of Londinium": 0, "Iceni": 0, "Brigantes (Cartimandua)": 0, "Brigantes (Venutius)": 0, "Parisi": 0, "Regni": 0, "The Druid Order": 0 }
-                },
-                playerKnowledge: { knownCharacters: {}, knownFactions: {} },
-                worldState: { currentDate: "60.03.03", currentTime: "16:00", majorEvents: ["Arrived in the territory of the Parisi."] },
-                keyCharacters: {},
-                factions: {}
-            };
-            
-            return { 
-                availableSkills: skills, 
-                startingSituations: situations,
-                startingGear: startingGear,
-                gameStateTemplate 
-            };
-        }
-
         async function loadGameData() {
+            // This now only loads the rules. Scenario data is hardcoded below.
             const rulesResponse = await fetch('./CoreRules.txt');
             if (!rulesResponse.ok) throw new Error('Could not load CoreRules.txt');
             coreRulesText = await rulesResponse.text();
-
-            const scenarioResponse = await fetch('./Scenario.txt');
-            if (!scenarioResponse.ok) throw new Error('Could not load Scenario.txt');
-            scenarioText = await scenarioResponse.text();
             
-            scenarioData = parseScenario(scenarioText);
+            // Scenario data is now embedded directly in the script for reliability.
+            scenarioData = initialScenarioData;
         }
 
         function initializeStartScreen() {
