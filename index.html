@@ -205,15 +205,14 @@
         function isObject(item) {
             return (item && typeof item === 'object' && !Array.isArray(item));
         }
-
+        
         async function loadGameData() {
             const rulesResponse = await fetch('./CoreRules.json');
             if (!rulesResponse.ok) throw new Error('Could not load CoreRules.json');
-            coreRulesText = await rulesResponse.text(); // Keep as text to send to API
+            coreRulesText = await rulesResponse.text();
 
             const scenarioResponse = await fetch('./Scenario.json');
             if (!scenarioResponse.ok) throw new Error('Could not load Scenario.json');
-            // Parse scenario directly into our data object
             scenarioData = await scenarioResponse.json();
         }
 
@@ -277,11 +276,11 @@
             skillsContainer.innerHTML = ''; 
             gearContainer.innerHTML = '';
             
-            scenarioData.availableSkills.forEach(skill => {
+            scenarioData.available_skills.forEach(skill => {
                 skillsContainer.innerHTML += `<div><label data-info="${skill.toLowerCase().replace(/\s/g, '_').replace(/[()]/g, '')}"><input type="checkbox" id="skill-${skill.toLowerCase()}" value="${skill}" class="skill-checkbox mr-2">${skill}</label></div>`;
             });
             
-            Object.entries(scenarioData.startingGear).forEach(([category, items]) => {
+            Object.entries(scenarioData.starting_gear_options).forEach(([category, items]) => {
                 let itemsHTML = items.map(item => `
                     <div class="ml-4"><label><input type="checkbox" class="gear-checkbox" value="${item}"> ${item}</label></div>
                 `).join('');
@@ -364,8 +363,9 @@
         }
 
         function createCharacter() {
-            gameState = JSON.parse(JSON.stringify(scenarioData.gameStateTemplate));
-
+            // This function now needs to build the initial gameState from scratch
+            let newGameState = {};
+            
             const name = document.getElementById('char-name').value;
             const gender = document.querySelector('input[name="gender"]:checked')?.value;
             const desc = document.getElementById('char-desc').value;
@@ -386,24 +386,43 @@
                 return;
             }
 
-            gameState.characterSheet.name = name;
-            gameState.characterSheet.physicalDescription = `Gender: ${gender}. ${desc}`;
-            gameState.characterSheet.languages["Common Brittonic"] = brittonicFluency;
-            gameState.characterSheet.languages["Vulgar Latin"] = latinFluency;
-            gameState.characterSheet.inventory.items = selectedGear;
+            // Build the gameState object
+            newGameState.turnCounter = 1;
+            newGameState.characterSheet = {
+                name: name,
+                physicalDescription: `Gender: ${gender}. ${desc}`,
+                health: "Healthy",
+                survivalStatus: "Sated, Hydrated, Warm",
+                attributes: {},
+                skills: {},
+                languages: { "Common Brittonic": brittonicFluency, "Vulgar Latin": latinFluency },
+                inventory: { currency: 0, items: selectedGear },
+                location: "Parisi Territory",
+                factionReputation: {}
+            };
+            newGameState.playerKnowledge = { knownCharacters: {}, knownFactions: {} };
+            newGameState.worldState = { currentDate: "60.03.03", currentTime: "16:00", majorEvents: ["Arrived in the territory of the Parisi."] };
+            newGameState.keyCharacters = scenarioData.initial_key_characters;
+            newGameState.factions = scenarioData.faction_data;
+            
+            Object.keys(newGameState.factions).forEach(f => {
+                newGameState.characterSheet.factionReputation[f] = 0;
+            });
 
             ['STR', 'DEX', 'WITS', 'CHA'].forEach(attr => {
                 let roll = rollDice(5, 20);
                 if (attr === bonusAttr) roll += 25;
-                gameState.characterSheet.attributes[attr] = Math.min(100, roll);
+                newGameState.characterSheet.attributes[attr] = Math.min(100, roll);
             });
 
-            scenarioData.availableSkills.forEach(skill => {
+            scenarioData.available_skills.forEach(skill => {
                 let roll = selectedSkills.includes(skill) ? rollDice(3, 20) + 25 : rollDice(3, 20);
-                gameState.characterSheet.skills[skill] = { value: roll, type: selectedSkills.includes(skill) ? 'core' : 'other' };
+                newGameState.characterSheet.skills[skill] = { value: roll, type: selectedSkills.includes(skill) ? 'core' : 'other' };
             });
 
-            let startingMessage = scenarioData.startingSituations[startLocation] || scenarioData.startingSituations.wilderness;
+            gameState = newGameState;
+
+            let startingMessage = scenarioData.starting_situations[startLocation] || scenarioData.starting_situations.wilderness;
             
             if(startLocation === 'roman_city') {
                 const cities = ["Camulodunum", "Londinium", "Verulamium"];
@@ -609,7 +628,7 @@
                 ${coreRulesText}
 
                 --- SCENARIO CONTEXT ---
-                ${scenarioText}
+                ${JSON.stringify(scenarioData, null, 2)}
 
                 --- CURRENT GAME STATE (JSON) ---
                 ${gameStateString}
@@ -662,7 +681,7 @@
                 await loadGameData();
                 initializeStartScreen();
             } catch (error) {
-                document.body.innerHTML = `<div class="text-red-400 p-8"><strong>Error loading game files:</strong> ${error.message}.<br><br>Please ensure <strong>CoreRules.txt</strong> and <strong>Scenario.txt</strong> are in the same folder as this index.html file.</div>`;
+                document.body.innerHTML = `<div class="text-red-400 p-8"><strong>Error loading game files:</strong> ${error.message}.<br><br>Please ensure <strong>CoreRules.json</strong> and <strong>Scenario.json</strong> are in the same folder as this index.html file.</div>`;
                 console.error(error);
             }
         });
