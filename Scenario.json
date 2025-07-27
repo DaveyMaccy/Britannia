@@ -1,0 +1,84 @@
+{
+  "title": "SCENARIO: The Eagle and the Iceni",
+  "setting_overview": {
+    "title": "Setting Overview & Tone",
+    "text": "The year is 60 AD. You are in the heart of Britannia, a land seething under the boot of the Roman Empire. The air is thick with resentment. The tribes whisper of rebellion, while the Roman colonists and veterans in their new cities grow fat and arrogant. The tone is gritty, dangerous, and historically authentic. Survival depends on your wits, your ability to adapt, and the choices you make when caught between the iron might of Rome and the furious spirit of the Celtic tribes."
+  },
+  "historical_context": {
+    "title": "In-Depth Historical Context",
+    "text": "You have arrived at a powder keg moment. In the south-east, Prasutagus, the client king of the Iceni tribe, has just died. In his will, he tried to preserve his kingdom by leaving it jointly to his daughters and the Roman Emperor, Nero. However, the Roman procurator, Catus Decianus, is poised to ignore the will, seeing an opportunity for personal profit. This situation is incredibly tense; one significant act of Roman arrogance could be the spark that ignites a furious rebellion. To the north, the powerful Brigantes are a fractured people; their queen, Cartimandua, is a staunch Roman ally, but her estranged husband, Venutius, harbors deep anti-Roman sentiments, creating a simmering civil war. You have arrived in the territory of the Parisi, a smaller tribe situated just south of the Brigantes. The Roman governor, Gaius Suetonius Paulinus, is currently far away in the west, campaigning against the druids on the island of Mona (Anglesey), leaving the province dangerously exposed."
+  },
+  "scenario_rules": [
+    {
+      "rule": "Magic & The Supernatural",
+      "details": "This is a strictly historical setting. Magic is disabled."
+    },
+    {
+      "rule": "Languages & Dialects",
+      "details": "Default setting is 'Easy' (100% fluency in Common Brittonic and Vulgar Latin). Dialects can be learned through immersion."
+    },
+    {
+      "rule": "Speechcraft",
+      "details": "All CHA-based social checks are resolved through player dialogue, not dice rolls."
+    },
+    {
+      "rule": "Economy & Currency",
+      "details": "A dual system of Roman Denarii and Celtic barter is in place."
+    },
+    {
+      "rule": "Time, Date & Event Triggers",
+      "details": "The game begins on 60.03.03 at 16:00. The Boudican Rebellion will trigger between 6 and 18 months from this date."
+    },
+    {
+      "rule": "Information, Rumors & NPC Knowledge",
+      "details": "Information quality depends on the NPC's role and location. The GM will make secret rolls to determine accuracy."
+    }
+  ],
+  "available_skills": [
+    "Athleticism",
+    "Survival",
+    "Improvisation",
+    "Stealth",
+    "First Aid",
+    "Observation",
+    "Melee (Improvised)",
+    "Unarmed Combat",
+    "Ranged Combat",
+    "Tactics",
+    "Lore"
+  ],
+  "starting_gear_options": {
+    "Jackets": ["Waxed Canvas Jacket", "Denim Jacket", "Leather Biker Jacket", "Hoodie", "Rain Poncho", "Fleece Jacket", "Bomber Jacket", "Trench Coat", "Sports Coat", "Windbreaker", "Puffy Vest", "Duster Coat", "Parka", "Blazer", "Cardigan", "Jean Vest", "Army Surplus Jacket", "Ski Jacket", "Lab Coat", "Smoking Jacket"],
+    "Shirts": ["T-Shirt", "Flannel Shirt", "Button-down Shirt", "Long-sleeve Thermal", "Polo Shirt", "Henley Shirt", "Sweatshirt", "V-neck Tee", "Graphic Tee", "Turtleneck", "Tank Top", "Hawaiian Shirt", "Rugby Shirt", "Guayabera", "Blouse", "Tunic Shirt", "Oxford Shirt", "Chamois Shirt", "Popover", "Western Shirt"],
+    "Pants": ["Blue Jeans", "Cargo Pants", "Hiking Trousers", "Sweatpants", "Khakis", "Corduroys", "Dress Slacks", "Ripped Jeans", "Leather Pants", "Shorts", "Joggers", "Overalls", "Chinos", "Tweed Trousers", "Linen Trousers", "Leggings", "Yoga Pants", "Capris", "Culottes", "Bell-bottoms"],
+    "Footwear": ["Leather Boots", "Running Shoes", "Hiking Boots", "Sandals", "Work Boots", "Dress Shoes", "Sneakers", "Crocs", "Flip-flops", "Cowboy Boots", "Loafers", "Moccasins", "Steel-toed Boots", "Wellingtons", "Espadrilles", "Cleats", "High Heels", "Slippers", "Water Shoes", "Oxfords"],
+    "Tools": ["Smartphone (18% battery)", "Pen Knife", "Multitool", "Lighter", "Flashlight (LED)", "Small Notebook & Pencil", "Duct Tape (small roll)", "Spork", "Sewing Kit", "Compass", "Magnifying Glass", "Binoculars", "Lockpicks", "Crowbar", "Screwdriver Set", "Whetstone", "Fishing Line & Hooks", "Paracord Bracelet", "Zip Ties", "Handcuffs"],
+    "Weapons": ["Combat Knife", "Handgun (6 bullets)", "Baseball Bat (Aluminum)", "Pepper Spray", "Tire Iron", "Stun Gun", "Taser", "Slingshot", "Brass Knuckles", "Machete", "Hatchet", "Ice Axe", "Bowie Knife", "Katana", "Nunchucks", "Crossbow (3 bolts)", "Hunting Rifle (2 bullets)", "Shotgun (2 shells)", "Flare Gun (1 flare)", "Blowgun (5 darts)"],
+    "Miscellaneous": ["Wallet (useless cards)", "Sunglasses", "Watch (digital)", "First Aid Kit (small)", "Protein Bar", "Water Bottle (full)", "Backpack", "Chewing Gum", "House Keys", "Prescription Glasses", "Hip Flask (full of whiskey)", "Deck of Cards", "Harmonica", "Zippo Lighter", "Sunscreen", "Bug Spray", "Hand Sanitizer", "Earbuds", "Portable Charger (dead)", "Scarf"]
+  },
+  "initial_key_characters": {
+    "Boudica": { "Significance": "Regional", "Description": "A tall, formidable woman in her late 30s, standing around 5'11\". She has a strong, athletic build, fair skin prone to flushing when angered, and piercing blue eyes. Her most distinguishing feature is a mane of fiery red hair that falls in thick braids to her hips. She typically wears fine wool tunics in shades of blue and green, adorned with heavy gold torcs and arm rings befitting a Celtic queen." },
+    "Gaius Suetonius Paulinus": { "Significance": "Provincial", "Description": "A man in his 50s, approximately 5'9\", with the lean, wiry physique of a career soldier. His skin is tanned and weathered from years on campaign, with a network of fine lines around his sharp, intelligent grey eyes. He has close-cropped grey hair and the stern, clean-shaven face of a Roman aristocrat. A thin scar runs along his jawline. He is never seen out of his military attire: a polished cuirass, red cloak, and the legionary's gladius at his hip." },
+    "Catus Decianus": { "Significance": "Provincial", "Description": "A portly, middle-aged man around 5'7\" with a soft, pale face, thin lips that easily twist into a sneer, and small, dark eyes. He is overweight, with a noticeable paunch that strains against his expensive, and often slightly garish, civilian robes. His complexion is pasty from a life spent indoors." },
+    "Cartimandua": { "Significance": "Regional", "Description": "A shrewd-looking woman in her 50s, around 5'6\". She is still handsome, with high cheekbones and intelligent, dark brown eyes. She keeps her greying dark hair in a complex Roman style of braids and pins. She adopts some Roman fashions, like a pinned stola over her Celtic dress, and is adorned with rich Brigantian gold and jet jewelry." },
+    "Venutius": { "Significance": "Regional", "Description": "A rugged, scarred warrior in his 50s, standing an imposing 6'2\". He has a powerful, muscular build, with long limbs and broad shoulders. His face is a roadmap of old battles, with a broken nose and a prominent scar across his left eyebrow. He has long, wild, dark hair, a thick beard, and intense, brooding brown eyes. He wears traditional Celtic garb—wool trousers and a tunic—and is never without his longsword." },
+    "Dumnorix": { "Significance": "Local", "Description": "A pragmatic man in his 40s, with a stocky, powerful build, around 5'8\". He has the weathered, sun-beaten face of someone who spends much of their time outdoors, with friendly crinkles around his green eyes. His brown hair and thick beard are neatly trimmed. He wears practical leather and wool clothing, suitable for the northern climate." },
+    "Tiberius Claudius Celer": { "Significance": "Regional", "Description": "A man in his 40s of average height (5'8\") and build. He is a former slave from Gaul and has a sharp, calculating gaze in his hazel eyes. He keeps his dark hair short in the Roman style and is always clean-shaven. He dresses in fine, but practical, dark-colored robes, choosing function over ostentation. His hands are surprisingly calloused for a merchant." },
+    "The Arch-Druid of Mona": { "Significance": "Provincial", "Description": "An elder whose age is impossible to guess. Gaunt and wiry, with eyes that seem to see through you. Speaks in riddles and pronouncements, wielding immense political and spiritual authority over the Celtic tribes." }
+  },
+  "faction_data": {
+    "Roman Province": { "Territory": "~25,000 sq. miles", "Military": "Very High", "Economy": "Strong", "Political Stability": "Low", "Technology": "Roman Provincial" },
+    "Roman Auxilia": { "Territory": "None", "Military": "High", "Economy": "None", "Political Stability": "Medium", "Technology": "Roman Military" },
+    "Merchants of Londinium": { "Territory": "None", "Military": "None", "Economy": "Very High", "Political Stability": "High", "Technology": "Roman Provincial" },
+    "The Iceni": { "Territory": "~1,500 sq. miles", "Military": "Medium", "Economy": "Good", "Political Stability": "Very Low", "Technology": "Iron Age" },
+    "The Brigantes": { "Territory": "~12,000 sq. miles", "Military": "High", "Economy": "Medium", "Political Stability": "Critical", "Technology": "Iron Age" },
+    "The Parisi": { "Territory": "~750 sq. miles", "Military": "Low", "Economy": "Medium", "Political Stability": "High", "Technology": "Iron Age" },
+    "The Regni": { "Territory": "~1,000 sq. miles", "Military": "Very Low", "Economy": "Very High", "Political Stability": "Very High", "Technology": "Roman Provincial" },
+    "The Druid Order": { "Territory": "None", "Military": "None", "Economy": "None", "Political Stability": "High", "Technology": "Lore" }
+  },
+  "starting_situations": {
+    "wilderness": "You are standing on a low, rolling hill under a vast, grey sky. The air is damp and smells of salt and wet grass. This is the land of the Parisi... A cold wind whips across the hill. You are completely alone. It is late afternoon, and the sky is already beginning to darken.",
+    "roman_city": "You awaken with a start, not in your bed, but slumped in a grimy alleyway. The sounds of a bustling city, shouts in Latin and a strange Celtic tongue, fill the air. You are in [CITY]. People in tunics and togas hurry past the alley entrance, ignoring you completely.",
+    "tribal_holding": "You find yourself on the edge of a large tribal settlement, a chaotic collection of roundhouses surrounded by a wooden palisade. The smell of woodsmoke and livestock is overpowering. Warriors with long hair and painted faces give you suspicious glances as you stand awkwardly near the gate of [HOLDING]."
+  }
+}
