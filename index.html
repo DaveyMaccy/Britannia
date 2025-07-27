@@ -233,7 +233,29 @@
                 });
             }
             
-            const gameStateTemplate = JSON.parse(JSON.stringify(initialScenarioData.gameStateTemplate));
+            // A simplified template structure for the app to build upon
+            const gameStateTemplate = {
+                turnCounter: 1,
+                characterSheet: {
+                    name: "", physicalDescription: "", health: "Healthy", survivalStatus: "Sated, Hydrated, Warm",
+                    attributes: { STR: 0, DEX: 0, WITS: 0, CHA: 0 },
+                    skills: {},
+                    languages: { "Common Brittonic": 100, "Vulgar Latin": 100 },
+                    inventory: { currency: 0, items: [] },
+                    location: "Parisi Territory",
+                    factionReputation: { "Roman Province": 0, "Roman Auxilia": 0, "Merchants of Londinium": 0, "Iceni": 0, "Brigantes (Cartimandua)": 0, "Brigantes (Venutius)": 0, "Parisi": 0, "Regni": 0 }
+                },
+                playerKnowledge: { knownCharacters: {}, knownFactions: {} },
+                worldState: { currentDate: "60.03.03", currentTime: "16:00", majorEvents: ["Arrived in the territory of the Parisi."] },
+                keyCharacters: {
+                    "Boudica": { name: "Boudica", significance: "Regional", status: "Alive", physicalDescription: "A tall, formidable woman in her late 30s, with a mane of fiery red hair." },
+                    "Gaius Suetonius Paulinus": { name: "Gaius Suetonius Paulinus", significance: "Provincial", status: "Alive", physicalDescription: "A lean, weathered career soldier in his 50s." }
+                },
+                factions: {
+                    "Roman Province": {}, "Roman Auxilia": {}, "Merchants of Londinium": {}, "Iceni": {},
+                    "Brigantes (Cartimandua)": {}, "Brigantes (Venutius)": {}, "Parisi": {}, "Regni": {}
+                }
+            };
             
             return { 
                 availableSkills: skills, 
@@ -695,9 +717,6 @@
         }
         
         const initialScenarioData = {
-             availableSkills: ["Athleticism", "Survival", "Improvisation", "Stealth", "First Aid", "Observation", "Melee (Improvised)", "Unarmed Combat", "Ranged Combat", "Tactics", "Lore"],
-             startingGear: { "Clothing": ["Simple wool tunic and trousers", "Sturdy leather tunic and trousers", "Roman-style tunic"], "Tools": ["Smartphone (18% battery)", "Pen Knife", "Small notebook and pencil", "Lighter"], "Weapons": ["Combat knife (more effective than pen knife)", "Handgun (6 bullets, no reloads possible)"], "Miscellaneous": ["Wallet (useless cards)", "First aid kit (small)", "Protein bar"] },
-             startingSituations: { wilderness: "<p>You are standing on a low, rolling hill under a vast, grey sky. The air is damp and smells of salt and wet grass. This is the land of the Parisi... A cold wind whips across the hill. You are completely alone. It is late afternoon, and the sky is already beginning to darken.</p>", roman_city: "<p>You awaken with a start, not in your bed, but slumped in a grimy alleyway. The sounds of a bustling city, shouts in Latin and a strange Celtic tongue, fill the air. You are in [CITY]. People in tunics and togas hurry past the alley entrance, ignoring you completely.</p>", tribal_holding: "<p>You find yourself on the edge of a large tribal settlement, a chaotic collection of roundhouses surrounded by a wooden palisade. The smell of woodsmoke and livestock is overpowering. Warriors with long hair and painted faces give you suspicious glances as you stand awkwardly near the gate of [HOLDING].</p>" },
              gameStateTemplate: {
                 turnCounter: 1,
                 characterSheet: {
