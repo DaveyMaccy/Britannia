@@ -1,756 +1,86 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Britannia 60 AD</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        .font-title {
-            font-family: 'IM Fell English', serif;
-        }
-        /* Custom scrollbar for a better aesthetic */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #2d3748; /* gray-800 */
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #718096; /* gray-600 */
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #a0aec0; /* gray-500 */
-        }
-        .story-content p {
-            margin-bottom: 1rem;
-        }
-        .creation-page {
-            max-height: 75vh;
-            overflow-y: auto;
-        }
-        .info-box {
-            background-color: #1a202c;
-            border-left: 2px solid #f6e05e;
-        }
-    </style>
-</head>
-<body class="bg-gray-900 text-gray-200">
-
-    <div id="app-container" class="flex flex-col md:flex-row h-screen hidden">
-
-        <!-- Left Sidebar: Game State & Character -->
-        <aside class="w-full md:w-1/4 bg-gray-800 p-4 flex flex-col h-screen">
-            <div class="flex-grow overflow-y-auto">
-                <h2 class="font-title text-2xl text-yellow-300 border-b-2 border-yellow-500 pb-2 mb-4">Game State</h2>
-                <div id="game-state-display">
-                    <!-- Game state will be rendered here by JavaScript -->
-                </div>
-            </div>
-            <div class="mt-auto pt-4 border-t border-gray-700">
-                <h3 class="font-title text-xl text-yellow-300 mb-2">Backup & Transfer</h3>
-                <div class="space-y-2">
-                    <textarea id="save-load-data" class="w-full bg-gray-900 text-xs rounded p-2 h-24 resize-none" placeholder="Save or load your game code here..."></textarea>
-                    <div class="flex gap-2">
-                        <button id="save-btn" class="w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Save</button>
-                        <button id="load-btn" class="w-1/2 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Load</button>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main Content: Story & Input -->
-        <main class="w-full md:w-1/2 flex flex-col h-screen bg-gray-900">
-            <div id="story-container" class="flex-grow p-6 overflow-y-auto">
-                <h1 class="font-title text-4xl text-center text-yellow-400 mb-6">Britannia 60 AD</h1>
-                <div id="story-content" class="text-lg leading-relaxed">
-                    <!-- Story content will be rendered here -->
-                </div>
-            </div>
-            <div class="p-4 bg-gray-800 border-t border-gray-700">
-                <form id="action-form" class="flex items-center gap-4">
-                    <input type="text" id="action-input" class="w-full bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="What do you do?">
-                    <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-2 px-4 rounded-lg transition-colors">Send</button>
-                </form>
-            </div>
-        </main>
-
-        <!-- Right Sidebar: Key Characters & Factions -->
-        <aside class="w-full md:w-1/4 bg-gray-800 p-4 overflow-y-auto h-screen">
-            <div class="h-1/2 pb-2">
-                <h2 class="font-title text-2xl text-yellow-300 border-b-2 border-yellow-500 pb-2 mb-4">Known Characters</h2>
-                <div id="key-characters-display" class="overflow-y-auto h-full"></div>
-            </div>
-            <div class="h-1/2 pt-2 border-t-2 border-gray-700">
-                 <h2 class="font-title text-2xl text-yellow-300 border-b-2 border-yellow-500 pb-2 mb-4">Factions</h2>
-                <div id="factions-display" class="overflow-y-auto h-full"></div>
-            </div>
-        </aside>
-
-    </div>
-    
-    <!-- Start Screen Modal -->
-    <div id="start-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-        <div class="bg-gray-800 p-8 rounded-lg max-w-md w-full text-white text-center">
-            <h1 class="font-title text-5xl text-yellow-400 mb-4">Britannia 60 AD</h1>
-            <p class="mb-6">To play, please enter your Gemini API Key. It will be saved locally in your browser and will not be shared.</p>
-            <div class="mb-4">
-                 <input type="password" id="api-key-input" class="w-full bg-gray-700 rounded px-3 py-2 text-center" placeholder="Enter your Gemini API Key">
-            </div>
-            <button id="continue-game-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors mb-4 disabled:bg-gray-600 disabled:cursor-not-allowed">Continue Game</button>
-            <button id="new-game-btn" class="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-4 rounded-lg transition-colors">New Game</button>
-            <div class="mt-6">
-                <a href="#" id="clear-data-btn" class="text-xs text-gray-500 hover:text-red-400 underline">Clear all local data (API Key & Saved Game)</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Character Creation Modal -->
-    <div id="setup-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
-        <div class="bg-gray-800 p-8 rounded-lg max-w-4xl w-full text-white">
-            <h2 class="font-title text-3xl mb-4 text-yellow-400 text-center">Character Creation</h2>
-            
-            <div class="flex gap-6">
-                <div class="w-2/3">
-                    <!-- Page 1: Appearance -->
-                    <div id="creation-page-1" class="creation-page">
-                        <h3 class="font-bold text-lg mb-2 text-yellow-300">Step 1: Appearance</h3>
-                        <div class="mb-4"><label for="char-name" class="block mb-2">Name:</label><input type="text" id="char-name" class="w-full bg-gray-700 rounded px-3 py-2" value="Character"></div>
-                        <div class="mb-4"><label class="block mb-2">Gender:</label><div class="flex gap-4"><label><input type="radio" name="gender" value="Male" class="mr-2">Male</label><label><input type="radio" name="gender" value="Female" class="mr-2">Female</label></div></div>
-                        <div class="mb-4"><label for="char-desc" class="block mb-2">Description:</label><textarea id="char-desc" class="w-full bg-gray-700 rounded px-3 py-2" rows="4" placeholder="Describe your character. Include at a minimum: Height, Weight, Build (e.g., slender, muscular), Hair Color, and Eye Color."></textarea></div>
-                    </div>
-
-                    <!-- Page 2: Abilities -->
-                    <div id="creation-page-2" class="creation-page hidden">
-                        <h3 class="font-bold text-lg mb-2 text-yellow-300">Step 2: Abilities</h3>
-                        <div class="mb-4"><label class="block mb-2" data-info="attributes">Strongest Attribute (+25 bonus):</label><select id="attr-bonus" class="w-full bg-gray-700 rounded px-3 py-2"><option value="None">None</option><option value="STR">Strength (STR)</option><option value="DEX">Dexterity (DEX)</option><option value="WITS" selected>Wits (WITS)</option><option value="CHA">Charisma (CHA)</option></select></div>
-                        <div class="mb-4"><label class="block mb-2" data-info="core_skills">Core Skills (Choose up to 3):</label><div id="core-skills-selection" class="grid grid-cols-2 md:grid-cols-3 gap-2"></div></div>
-                        <div class="mb-4"><label class="block mb-2" data-info="languages">Starting Languages:</label><div class="grid grid-cols-2 gap-4"><div><label for="lang-brittonic" class="block mb-1">Common Brittonic</label><select id="lang-brittonic" class="w-full bg-gray-700 rounded px-3 py-2"><option value="0">None (0%)</option><option value="25">Basic (25%)</option><option value="50">Conversational (50%)</option><option value="75" selected>Fluent (75%)</option><option value="100">Native (100%)</option></select></div><div><label for="lang-latin" class="block mb-1">Vulgar Latin</label><select id="lang-latin" class="w-full bg-gray-700 rounded px-3 py-2"><option value="0">None (0%)</option><option value="25">Basic (25%)</option><option value="50">Conversational (50%)</option><option value="75" selected>Fluent (75%)</option><option value="100">Native (100%)</option></select></div></div></div>
-                    </div>
-
-                    <!-- Page 3: Inventory -->
-                    <div id="creation-page-3" class="creation-page hidden">
-                        <h3 class="font-bold text-lg mb-2 text-yellow-300">Step 3: Starting Gear</h3>
-                        <div class="mb-4 p-2 bg-gray-700 rounded"><label class="flex items-center"><input type="checkbox" id="terminator-mode" class="mr-3 h-5 w-5">Arrive with nothing (Hard Mode)</label><p class="text-xs text-gray-400 mt-1">This will increase difficulty. Locals may react negatively, and you will be exposed to the elements.</p></div>
-                        <div id="gear-selection"></div>
-                    </div>
-                    
-                    <!-- Page 4: Starting Location -->
-                    <div id="creation-page-4" class="creation-page hidden">
-                        <h3 class="font-bold text-lg mb-2 text-yellow-300">Step 4: Arrival</h3>
-                         <p class="mb-4 text-gray-300">How do you arrive in this new time?</p>
-                         <div class="space-y-3">
-                            <div><label><input type="radio" name="start-location" value="wilderness" class="mr-2" checked>In a remote wilderness, alone and unseen.</label></div>
-                            <div><label><input type="radio" name="start-location" value="roman_city" class="mr-2">In the bustling streets of a random Roman city.</label></div>
-                            <div><label><input type="radio" name="start-location" value="tribal_holding" class="mr-2">In the heart of a random Celtic tribal holding.</label></div>
-                         </div>
-                    </div>
-                </div>
-                <div class="w-1/3 info-box p-4 rounded-lg">
-                    <div id="info-box-content"></div>
-                </div>
-            </div>
-
-            <!-- Navigation -->
-            <div class="mt-6 flex justify-between">
-                <button id="prev-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg transition-colors hidden">Back</button>
-                <button id="next-btn" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-2 px-6 rounded-lg transition-colors ml-auto">Next</button>
-                <button id="create-char-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-colors ml-auto hidden">Begin Journey</button>
-            </div>
-
-        </div>
-    </div>
-
-
-    <script>
-        // --- CORE GAME DATA & STATE MANAGEMENT (GLOBAL VARIABLES) ---
-        
-        let gameState = {};
-        let turnCounter = 0;
-        let apiKey = '';
-        let coreRulesText = '';
-        let scenarioText = '';
-        let scenarioData = {};
-        let creationPage = 1;
-
-        // --- ALL FUNCTION DEFINITIONS (DEFINED FIRST TO PREVENT ERRORS) ---
-
-        function rollDice(count, sides) {
-            let total = 0;
-            for (let i = 0; i < count; i++) total += Math.floor(Math.random() * sides) + 1;
-            return total;
-        }
-
-        function mergeDeep(target, source) {
-            const output = { ...target };
-            if (isObject(target) && isObject(source)) {
-                Object.keys(source).forEach(key => {
-                    if (isObject(source[key])) {
-                        if (!(key in target))
-                            Object.assign(output, { [key]: source[key] });
-                        else
-                            output[key] = mergeDeep(target[key], source[key]);
-                    } else {
-                        Object.assign(output, { [key]: source[key] });
-                    }
-                });
-            }
-            return output;
-        }
-
-        function isObject(item) {
-            return (item && typeof item === 'object' && !Array.isArray(item));
-        }
-
-        function parseScenario(text) {
-            const skillsMatch = text.match(/## 4\. Available Skills\n([\s\S]*?)\n##/);
-            const skills = skillsMatch ? skillsMatch[1].split('\n').map(s => s.replace(/[\*\-]\s/g, '').trim()).filter(Boolean) : [];
-
-            const situationMatch = text.match(/## 8\. Starting Situations\n([\s\S]*?)\n##/);
-            const situations = {};
-            if(situationMatch) {
-                situationMatch[1].split('- ').forEach(part => {
-                    if(part.trim()){
-                        const [key, ...value] = part.split(':');
-                        situations[key.trim()] = value.join(':').trim().replace(/\n/g, '<p>');
-                    }
-                });
-            }
-
-            const gearMatch = text.match(/## 5\. Starting Gear Options\n([\s\S]*?)\n##/);
-            const startingGear = {};
-            if(gearMatch){
-                gearMatch[1].split('- ').forEach(part => {
-                    if(part.trim()){
-                        const [category, items] = part.split(':');
-                        startingGear[category.trim()] = items.split(',').map(i => i.trim());
-                    }
-                });
-            }
-            
-            // A simplified template structure for the app to build upon
-            const gameStateTemplate = {
-                turnCounter: 1,
-                characterSheet: {
-                    name: "", physicalDescription: "", health: "Healthy", survivalStatus: "Sated, Hydrated, Warm",
-                    attributes: { STR: 0, DEX: 0, WITS: 0, CHA: 0 },
-                    skills: {},
-                    languages: { "Common Brittonic": 100, "Vulgar Latin": 100 },
-                    inventory: { currency: 0, items: [] },
-                    location: "Parisi Territory",
-                    factionReputation: { "Roman Province": 0, "Roman Auxilia": 0, "Merchants of Londinium": 0, "Iceni": 0, "Brigantes (Cartimandua)": 0, "Brigantes (Venutius)": 0, "Parisi": 0, "Regni": 0 }
-                },
-                playerKnowledge: { knownCharacters: {}, knownFactions: {} },
-                worldState: { currentDate: "60.03.03", currentTime: "16:00", majorEvents: ["Arrived in the territory of the Parisi."] },
-                keyCharacters: {
-                    "Boudica": { name: "Boudica", significance: "Regional", status: "Alive", physicalDescription: "A tall, formidable woman in her late 30s, with a mane of fiery red hair." },
-                    "Gaius Suetonius Paulinus": { name: "Gaius Suetonius Paulinus", significance: "Provincial", status: "Alive", physicalDescription: "A lean, weathered career soldier in his 50s." }
-                },
-                factions: {
-                    "Roman Province": {}, "Roman Auxilia": {}, "Merchants of Londinium": {}, "Iceni": {},
-                    "Brigantes (Cartimandua)": {}, "Brigantes (Venutius)": {}, "Parisi": {}, "Regni": {}
-                }
-            };
-            
-            return { 
-                availableSkills: skills, 
-                startingSituations: situations,
-                startingGear: startingGear,
-                gameStateTemplate 
-            };
-        }
-
-        async function loadGameData() {
-            const rulesResponse = await fetch('./CoreRules.txt');
-            if (!rulesResponse.ok) throw new Error('Could not load CoreRules.txt');
-            coreRulesText = await rulesResponse.text();
-
-            const scenarioResponse = await fetch('./Scenario.txt');
-            if (!scenarioResponse.ok) throw new Error('Could not load Scenario.txt');
-            scenarioText = await scenarioResponse.text();
-            
-            scenarioData = parseScenario(scenarioText);
-        }
-
-        function initializeStartScreen() {
-            const continueBtn = document.getElementById('continue-game-btn');
-            const newGameBtn = document.getElementById('new-game-btn');
-            const apiKeyInput = document.getElementById('api-key-input');
-            const clearDataBtn = document.getElementById('clear-data-btn');
-
-            const savedApiKey = localStorage.getItem('rpgApiKey');
-            if (savedApiKey) apiKeyInput.value = savedApiKey;
-            
-            const savedGame = localStorage.getItem('rpgGameState');
-            const hasValidSave = savedGame && JSON.parse(savedGame).turnCounter > 0;
-
-            if (hasValidSave) {
-                continueBtn.disabled = false;
-                continueBtn.addEventListener('click', () => {
-                    if (setApiKey()) loadGameFromLocalStorage();
-                });
-            } else {
-                continueBtn.disabled = true;
-            }
-            
-            newGameBtn.addEventListener('click', () => {
-                if (hasValidSave) {
-                    if (confirm('Starting a new game will delete your previous locally stored game files. Are you sure?')) {
-                         if (setApiKey()) showSetupModal();
-                    }
-                } else {
-                    if (setApiKey()) showSetupModal();
-                }
-            });
-            
-            clearDataBtn.addEventListener('click', clearLocalStorage);
-            
-            document.getElementById('action-form').addEventListener('submit', handlePlayerAction);
-            document.getElementById('save-btn').addEventListener('click', handleSave);
-            document.getElementById('load-btn').addEventListener('click', handleLoad);
-        }
-
-        function setApiKey() {
-            const apiKeyInput = document.getElementById('api-key-input');
-            const key = apiKeyInput.value.trim();
-            if (!key) {
-                alert('Please enter a valid Gemini API Key to continue.');
-                return false;
-            }
-            apiKey = key;
-            localStorage.setItem('rpgApiKey', key);
-            return true;
-        }
-
-        function showSetupModal() {
-            localStorage.removeItem('rpgGameState');
-
-            document.getElementById('start-modal').classList.add('hidden');
-            const modal = document.getElementById('setup-modal');
-            const skillsContainer = document.getElementById('core-skills-selection');
-            const gearContainer = document.getElementById('gear-selection');
-            skillsContainer.innerHTML = ''; 
-            gearContainer.innerHTML = '';
-            
-            scenarioData.availableSkills.forEach(skill => {
-                skillsContainer.innerHTML += `<div><label data-info="${skill.toLowerCase().replace(/\s/g, '_').replace(/[()]/g, '')}"><input type="checkbox" id="skill-${skill.toLowerCase()}" value="${skill}" class="skill-checkbox mr-2">${skill}</label></div>`;
-            });
-            
-            Object.entries(scenarioData.startingGear).forEach(([category, items]) => {
-                let itemsHTML = items.map(item => `
-                    <div class="ml-4"><label><input type="checkbox" class="gear-checkbox" value="${item}"> ${item}</label></div>
-                `).join('');
-                gearContainer.innerHTML += `<details class="mb-2" open><summary class="font-bold cursor-pointer">${category}</summary>${itemsHTML}</details>`;
-            });
-
-            document.querySelectorAll('.skill-checkbox').forEach(checkbox => {
-                checkbox.addEventListener('change', () => {
-                    const checkedCount = document.querySelectorAll('.skill-checkbox:checked').length;
-                    if (checkedCount > 3) {
-                        alert('You can only select up to 3 core skills.');
-                        checkbox.checked = false;
-                    }
-                });
-            });
-            
-            document.getElementById('terminator-mode').addEventListener('change', (e) => {
-                 document.querySelectorAll('.gear-checkbox').forEach(cb => {
-                    cb.disabled = e.target.checked;
-                    if(e.target.checked) cb.checked = false;
-                 });
-            });
-
-            modal.classList.remove('hidden');
-            setupInfoBoxListeners();
-            setupCreationNav();
-        }
-        
-        function setupCreationNav() {
-            document.getElementById('next-btn').addEventListener('click', () => navigateCreation(1));
-            document.getElementById('prev-btn').addEventListener('click', () => navigateCreation(-1));
-            document.getElementById('create-char-btn').addEventListener('click', createCharacter);
-        }
-
-        function navigateCreation(direction) {
-            if (direction > 0 && creationPage === 2) {
-                const checkedCount = document.querySelectorAll('.skill-checkbox:checked').length;
-                if (checkedCount > 3) {
-                    alert('You can select a maximum of 3 core skills.');
-                    return;
-                }
-            }
-
-            document.getElementById(`creation-page-${creationPage}`).classList.add('hidden');
-            creationPage += direction;
-            document.getElementById(`creation-page-${creationPage}`).classList.remove('hidden');
-
-            document.getElementById('prev-btn').classList.toggle('hidden', creationPage === 1);
-            document.getElementById('next-btn').classList.toggle('hidden', creationPage === 4);
-            document.getElementById('create-char-btn').classList.toggle('hidden', creationPage !== 4);
-        }
-
-        function setupInfoBoxListeners() {
-            const infoBox = document.getElementById('info-box-content');
-            const infoContent = {
-                default: `<h3>Information</h3><p>Hover over an item on the left to learn more about it.</p>`,
-                attributes: `<h3>Attributes</h3><p>Your four core stats. They determine your raw, untrained potential. Choosing a strongest attribute gives a +25 bonus to its starting roll.</p>`,
-                core_skills: `<h3>Core Skills</h3><p>Your primary talents. You can choose up to 3. They start with a higher value (+25 bonus) and represent what your character is naturally good at.</p>`,
-                languages: `<h3>Languages</h3><p>Your starting fluency. Higher fluency makes communication easier and opens up more social options.</p>`,
-                athleticism: `<h3>Athleticism</h3><p>Governs physical prowess like running, jumping, and swimming. Increases your daily travel distance on foot.</p>`,
-                survival: `<h3>Survival</h3><p>Your ability to find food, water, and shelter in the wild. Essential for staying alive outside of settlements.</p>`,
-                improvisation: `<h3>Improvisation</h3><p>The skill of creating tools and solutions from available materials, heavily influenced by your modern knowledge.</p>`,
-                stealth: `<h3>Stealth</h3><p>Allows you to move unseen and unheard, useful for avoiding conflict or gaining a tactical advantage.</p>`,
-                first_aid: `<h3>First Aid</h3><p>Your ability to treat wounds and injuries. Can be significantly boosted by applying correct modern medical knowledge.</p>`,
-                observation: `<h3>Observation</h3><p>Your ability to notice fine details, spot ambushes, or discern if someone is lying.</p>`,
-                melee_improvised: `<h3>Melee (Improvised)</h3><p>Fighting with whatever you can find, from your pen knife to a tree branch. Represents untrained close-quarters combat.</p>`,
-                unarmed_combat: `<h3>Unarmed Combat</h3><p>Your skill in hand-to-hand fighting, using fists, feet, and grappling.</p>`,
-                ranged_combat: `<h3>Ranged Combat</h3><p>Your proficiency with projectile weapons like bows, slings, or even a modern firearm.</p>`,
-                tactics: `<h3>Tactics</h3><p>Your understanding of battlefield strategy. Can be used to command others or gain an advantage in a fight.</p>`,
-                lore: `<h3>Lore</h3><p>Knowledge of history, local customs, and beliefs. Crucial for navigating the complex social and political landscape.</p>`
-            };
-            
-            infoBox.innerHTML = infoContent.default;
-
-            document.querySelectorAll('[data-info]').forEach(el => {
-                el.addEventListener('mouseenter', () => {
-                    infoBox.innerHTML = infoContent[el.dataset.info] || infoContent.default;
-                });
-            });
-        }
-
-        function createCharacter() {
-            gameState = JSON.parse(JSON.stringify(scenarioData.gameStateTemplate));
-
-            const name = document.getElementById('char-name').value;
-            const gender = document.querySelector('input[name="gender"]:checked')?.value;
-            const desc = document.getElementById('char-desc').value;
-            
-            const bonusAttr = document.getElementById('attr-bonus').value;
-            const selectedSkills = Array.from(document.querySelectorAll('.skill-checkbox:checked')).map(cb => cb.value);
-            const brittonicFluency = parseInt(document.getElementById('lang-brittonic').value, 10);
-            const latinFluency = parseInt(document.getElementById('lang-latin').value, 10);
-
-            const terminatorMode = document.getElementById('terminator-mode').checked;
-            const selectedGear = terminatorMode ? [] : Array.from(document.querySelectorAll('.gear-checkbox:checked')).map(cb => cb.value);
-
-            const startLocation = document.querySelector('input[name="start-location"]:checked').value;
-            
-            if (!name || !desc || !gender || selectedSkills.length > 3) {
-                alert('Please ensure all fields on Page 1 & 2 are complete, and you have selected 0 to 3 core skills.');
-                navigateCreation(1 - creationPage);
-                return;
-            }
-
-            gameState.characterSheet.name = name;
-            gameState.characterSheet.physicalDescription = `Gender: ${gender}. ${desc}`;
-            gameState.characterSheet.languages["Common Brittonic"] = brittonicFluency;
-            gameState.characterSheet.languages["Vulgar Latin"] = latinFluency;
-            gameState.characterSheet.inventory.items = selectedGear;
-
-            ['STR', 'DEX', 'WITS', 'CHA'].forEach(attr => {
-                let roll = rollDice(5, 20);
-                if (attr === bonusAttr) roll += 25;
-                gameState.characterSheet.attributes[attr] = Math.min(100, roll);
-            });
-
-            scenarioData.availableSkills.forEach(skill => {
-                let roll = selectedSkills.includes(skill) ? rollDice(3, 20) + 25 : rollDice(3, 20);
-                gameState.characterSheet.skills[skill] = { value: roll, type: selectedSkills.includes(skill) ? 'core' : 'other' };
-            });
-
-            let startingMessage = scenarioData.startingSituations[startLocation] || scenarioData.startingSituations.wilderness;
-            
-            if(startLocation === 'roman_city') {
-                const cities = ["Camulodunum", "Londinium", "Verulamium"];
-                const city = cities[Math.floor(Math.random() * cities.length)];
-                startingMessage = startingMessage.replace('[CITY]', city);
-                gameState.characterSheet.location = city;
-            } else if (startLocation === 'tribal_holding') {
-                const holdings = ["the Iceni capital", "the Parisi capital", "Stanwick, the Brigante capital"];
-                const holding = holdings[Math.floor(Math.random() * holdings.length)];
-                startingMessage = startingMessage.replace('[HOLDING]', holding);
-                gameState.characterSheet.location = holding;
-            }
-
-            startGame(startingMessage);
-        }
-
-        function startGame(startingMessage) {
-            document.getElementById('start-modal').classList.add('hidden');
-            document.getElementById('setup-modal').classList.add('hidden');
-            document.getElementById('app-container').classList.remove('hidden');
-            turnCounter = gameState.turnCounter || 1;
-            updateUI();
-            addStoryMessage(startingMessage, "GM");
-        }
-
-        // --- UI & RENDER FUNCTIONS ---
-        function renderFactions() {
-            const display = document.getElementById('factions-display');
-            const factions = gameState.factions || {};
-             display.innerHTML = Object.keys(factions).map(name => `
-                <div class="mb-2 text-sm">
-                    <p><strong>${name}:</strong> ${gameState.characterSheet.factionReputation[name] || 0} Rep</p>
-                </div>
-            `).join('');
-        }
-        
-        function renderKeyCharacters() {
-            const display = document.getElementById('key-characters-display');
-            const knownChars = gameState.playerKnowledge.knownCharacters || {};
-            if (Object.keys(knownChars).length === 0) {
-                display.innerHTML = `<p class="text-gray-500 italic">You have not met any key characters yet.</p>`;
-                return;
-            }
-            display.innerHTML = Object.entries(knownChars).map(([name, data]) => `
-                <div class="mb-4 p-3 bg-gray-700 rounded-lg">
-                    <h3 class="font-title text-lg text-yellow-400">${name}</h3>
-                    ${data.description ? `<p class="text-sm"><strong>Known Info:</strong> ${data.description}</p>` : ''}
-                    ${data.status ? `<p class="text-sm"><strong>Status:</strong> ${data.status}</p>` : ''}
-                </div>
-            `).join('');
-        }
-        
-        function renderGameState() {
-            const display = document.getElementById('game-state-display');
-            const pc = gameState.characterSheet;
-            
-            let skillsHTML = Object.entries(pc.skills).map(([name, data]) => 
-                `<li class="${data.type === 'core' ? 'text-yellow-400' : ''}">${name}: ${data.value}</li>`
-            ).join('');
-
-            let languagesHTML = Object.entries(pc.languages).map(([name, fluency]) =>
-                `<li>${name}: ${fluency}%</li>`
-            ).join('');
-
-            let inventoryHTML = pc.inventory.items.map(item => `<li>${item}</li>`).join('');
-
-            display.innerHTML = `
-                <div class="space-y-4">
-                    <div><h3 class="font-title text-xl text-yellow-400">${pc.name}</h3><p class="text-sm italic">${pc.physicalDescription}</p></div>
-                    <div><p><strong>Health:</strong> <span class="text-green-400">${pc.health}</span></p><p><strong>Status:</strong> ${pc.survivalStatus}</p></div>
-                    <div><h4 class="font-bold border-b border-gray-600 mb-1">Attributes</h4><ul class="text-sm"><li>STR: ${pc.attributes.STR}</li><li>DEX: ${pc.attributes.DEX}</li><li>WITS: ${pc.attributes.WITS}</li><li>CHA: ${pc.attributes.CHA}</li></ul></div>
-                    <div><h4 class="font-bold border-b border-gray-600 mb-1">Skills</h4><ul class="text-sm">${skillsHTML}</ul></div>
-                    <div><h4 class="font-bold border-b border-gray-600 mb-1">Languages</h4><ul class="text-sm">${languagesHTML}</ul></div>
-                    <div><h4 class="font-bold border-b border-gray-600 mb-1">Inventory</h4><ul class="text-sm"><li>${pc.inventory.currency} Denarii</li>${inventoryHTML}</ul></div>
-                </div>
-            `;
-        }
-        
-        function addStoryMessage(html, sender="GM") {
-            const content = document.getElementById('story-content');
-            const messageDiv = document.createElement('div');
-            
-            if (sender === "Player") {
-                messageDiv.className = 'text-right mb-4';
-                messageDiv.innerHTML = `<div class="bg-yellow-700 inline-block p-3 rounded-lg text-left"><em>${html}</em></div>`;
-            } else {
-                const header = document.createElement('p');
-                header.className = 'text-sm text-yellow-300 font-title';
-                header.textContent = `[Turn ${turnCounter} | ${gameState.worldState.currentDate} | ${gameState.worldState.currentTime}]`;
-                content.appendChild(header);
-                
-                messageDiv.className = 'mb-4';
-                messageDiv.innerHTML = html;
-            }
-            
-            content.appendChild(messageDiv);
-            document.getElementById('story-container').scrollTop = document.getElementById('story-container').scrollHeight;
-        }
-
-        // --- GAME LOGIC ---
-
-        async function handlePlayerAction(event) {
-            event.preventDefault();
-            const input = document.getElementById('action-input');
-            const actionText = input.value.trim();
-            if (!actionText) return;
-
-            addStoryMessage(actionText, "Player");
-            input.value = '';
-            input.disabled = true;
-            document.querySelector('#action-form button').disabled = true;
-
-            const fullPrompt = constructFullPrompt(actionText);
-            const apiResponse = await callGeminiAPI(fullPrompt);
-            
-            processApiResponse(apiResponse);
-
-            turnCounter++;
-            gameState.turnCounter = turnCounter;
-            
-            saveGameToLocalStorage();
-            updateUI();
-            
-            input.disabled = false;
-            document.querySelector('#action-form button').disabled = false;
-            input.focus();
-        }
-
-        function processApiResponse(response) {
-            if (response.stateChanges) {
-                gameState = mergeDeep(gameState, response.stateChanges);
-            }
-            addStoryMessage(response.narrative, "GM");
-        }
-        
-        // --- SAVE / LOAD LOGIC ---
-
-        function saveGameToLocalStorage() {
-            localStorage.setItem('rpgGameState', JSON.stringify(gameState));
-        }
-
-        function loadGameFromLocalStorage() {
-            const savedGame = localStorage.getItem('rpgGameState');
-            if (savedGame) {
-                gameState = JSON.parse(savedGame);
-                const lastEvent = gameState.worldState.majorEvents[gameState.worldState.majorEvents.length - 1] || "your journey";
-                startGame(`Game loaded. You continue ${lastEvent}.`);
-            }
-        }
-
-        function handleSave() {
-            const jsonString = JSON.stringify(gameState);
-            const base64String = btoa(jsonString);
-            const textArea = document.getElementById('save-load-data');
-            textArea.value = base64String;
-            textArea.select();
-            document.execCommand('copy');
-            alert('Backup code copied to clipboard!');
-        }
-        
-        function handleLoad() {
-            const textArea = document.getElementById('save-load-data');
-            loadGameFromCode(textArea.value);
-        }
-
-        function loadGameFromCode(saveCode) {
-            if (!saveCode.trim()) {
-                alert('Please paste a save code into the text area first.');
-                return;
-            }
-            try {
-                const jsonString = atob(saveCode);
-                const loadedData = JSON.parse(jsonString);
-
-                if (loadedData.characterSheet && loadedData.keyCharacters) {
-                    gameState = loadedData;
-                    document.getElementById('story-content').innerHTML = '';
-                    const lastEvent = gameState.worldState.majorEvents[gameState.worldState.majorEvents.length - 1] || "your journey";
-                    startGame(`Game loaded from code. You continue ${lastEvent}.`);
-                } else {
-                    throw new Error('Invalid save file structure.');
-                }
-            } catch (error) {
-                console.error("Failed to load game:", error);
-                alert('Failed to load game. The save code appears to be invalid or corrupted.');
-            }
-        }
-        
-        function clearLocalStorage() {
-            localStorage.removeItem('rpgGameState');
-            localStorage.removeItem('rpgApiKey');
-            document.getElementById('api-key-input').value = '';
-            document.getElementById('continue-game-btn').disabled = true;
-            alert('All local data has been cleared.');
-        }
-
-        // --- API & DATA PARSING ---
-
-        function constructFullPrompt(playerAction) {
-            const gameStateString = JSON.stringify(gameState, null, 2);
-            return `
-                --- CORE RULES ---
-                ${coreRulesText}
-
-                --- SCENARIO CONTEXT ---
-                ${scenarioText}
-
-                --- CURRENT GAME STATE (JSON) ---
-                ${gameStateString}
-
-                --- PLAYER ACTION ---
-                ${playerAction}
-            `;
-        }
-
-        async function callGeminiAPI(prompt) {
-            if (!apiKey) {
-                alert("API Key is not set. Please refresh and enter your key.");
-                return { narrative: `<p class="text-red-400">Error: API Key is missing.</p>`, stateChanges: {} };
-            }
-            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${apiKey}`;
-
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                generationConfig: { responseMimeType: "application/json" }
-            };
-
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`API call failed with status: ${response.status} - ${errorData.error.message}`);
-                }
-
-                const data = await response.json();
-                const responseText = data.candidates[0].content.parts[0].text;
-                return JSON.parse(responseText);
-
-            } catch (error) {
-                console.error("Error calling Gemini API:", error);
-                return {
-                    narrative: `<p class="text-red-400">Error connecting to the AI. Please check the console for details.</p>`,
-                    stateChanges: {}
-                };
-            }
-        }
-        
-        const initialScenarioData = {
-             gameStateTemplate: {
-                turnCounter: 1,
-                characterSheet: {
-                    name: "", physicalDescription: "", health: "Healthy", survivalStatus: "Sated, Hydrated, Warm",
-                    attributes: { STR: 0, DEX: 0, WITS: 0, CHA: 0 },
-                    skills: {},
-                    languages: { "Common Brittonic": 100, "Vulgar Latin": 100 },
-                    inventory: { currency: 0, items: [] },
-                    location: "Parisi Territory",
-                    factionReputation: { "Roman Province": 0, "Roman Auxilia": 0, "Merchants of Londinium": 0, "Iceni": 0, "Brigantes (Cartimandua)": 0, "Brigantes (Venutius)": 0, "Parisi": 0, "Regni": 0 }
-                },
-                playerKnowledge: { knownCharacters: {}, knownFactions: {} },
-                worldState: { currentDate: "60.03.03", currentTime: "16:00", majorEvents: ["Arrived in the territory of the Parisi."] },
-                keyCharacters: {
-                    "Boudica": { name: "Boudica", significance: "Regional", status: "Alive", physicalDescription: "A tall, formidable woman in her late 30s, with a mane of fiery red hair." },
-                    "Gaius Suetonius Paulinus": { name: "Gaius Suetonius Paulinus", significance: "Provincial", status: "Alive", physicalDescription: "A lean, weathered career soldier in his 50s." }
-                },
-                factions: {
-                    "Roman Province": {}, "Roman Auxilia": {}, "Merchants of Londinium": {}, "Iceni": {},
-                    "Brigantes (Cartimandua)": {}, "Brigantes (Venutius)": {}, "Parisi": {}, "Regni": {}
-                }
-            }
-        };
-
-        // --- SCRIPT EXECUTION START ---
-        document.addEventListener('DOMContentLoaded', async () => {
-            try {
-                await loadGameData();
-                initializeStartScreen();
-            } catch (error) {
-                document.body.innerHTML = `<div class="text-red-400 p-8"><strong>Error loading game files:</strong> ${error.message}.<br><br>Please ensure <strong>CoreRules.txt</strong> and <strong>Scenario.txt</strong> are in the same folder as this index.html file.</div>`;
-                console.error(error);
-            }
-        });
-    </script>
-</body>
-</html>
+# SCENARIO: The Eagle and the Iceni
+
+## 1. Setting Overview & Tone
+The year is 60 AD. You are in the heart of Britannia, a land seething under the boot of the Roman Empire. The air is thick with resentment. The tribes whisper of rebellion, while the Roman colonists and veterans in their new cities grow fat and arrogant. The tone is gritty, dangerous, and historically authentic. Survival depends on your wits, your ability to adapt, and the choices you make when caught between the iron might of Rome and the furious spirit of the Celtic tribes.
+
+## 2. In-Depth Historical Context
+You have arrived at a powder keg moment. In the south-east, Prasutagus, the client king of the Iceni tribe, has just died. In his will, he tried to preserve his kingdom by leaving it jointly to his daughters and the Roman Emperor, Nero. However, the Roman procurator, Catus Decianus, is poised to ignore the will, seeing an opportunity for personal profit. This situation is incredibly tense; one significant act of Roman arrogance could be the spark that ignites a furious rebellion. To the north, the powerful Brigantes are a fractured people; their queen, Cartimandua, is a staunch Roman ally, but her estranged husband, Venutius, harbors deep anti-Roman sentiments, creating a simmering civil war. You have arrived in the territory of the Parisi, a smaller tribe situated just south of the Brigantes. The Roman governor, Gaius Suetonius Paulinus, is currently far away in the west, campaigning against the druids on the island of Mona (Anglesey), leaving the province dangerously exposed.
+
+## 3. Scenario-Specific Rules
+- **Magic & The Supernatural:** This is a strictly historical setting. Magic is disabled. The beliefs of the Celts and Romans in their gods and omens are very real to them, but there are no fireballs or magical spells.
+- **Languages & Dialects:**
+    - **Default Setting:** This scenario uses the "Easy" language setting. The character starts with 100% fluency in Common Brittonic and Vulgar Latin.
+    - **Common Brittonic:** This is the base language understood by all Celtic tribes in Britannia, though each has its own distinct dialect.
+    - **Dialects:** Each tribe speaks a dialect of Brittonic (e.g., Icenian, Brigantian). Learning a local dialect is tracked like a language and can improve relations with that tribe while potentially causing friction with their enemies.
+    - **NPC Languages:** Most tribal peasants will only speak their local dialect. Traders, travelers, and leaders are often multilingual, typically speaking multiple dialects and Vulgar Latin.
+- **Speechcraft:** All CHA-based social checks (Persuasion, Deception, Intimidation) are resolved through player dialogue, not dice rolls. The GM will judge the quality and effectiveness of your argument, plea, or threat based on what you actually say and the NPC's personality and motivations.
+- **Economy & Currency:**
+    - **Roman Coinage:** The primary currency in Roman-controlled areas (Londinium, Camulodunum, etc.) and for large-scale trade is the Roman **Denarius** (a silver coin).
+    - **Barter System:** Among the tribes, a barter system is still prevalent.
+- **Time, Date & Event Triggers:**
+    - **Start Date & Time:** The game begins on `60.03.03` at `16:00`.
+    - **Rebellion Trigger:** The Boudican Rebellion will be triggered on a secret, randomly determined date between `60.09.03` (6 months after start) and `61.09.03` (18 months after start).
+- **Information, Rumors & NPC Knowledge:**
+    - **Principle of Locality:** An NPC's knowledge is most accurate about their immediate surroundings and becomes less reliable with distance.
+    - **NPC Knowledge Tiers:** Locals, Travelers, and Faction Insiders have varying levels of accuracy.
+    - **The Information Check (d100 Roll):** The GM will make a secret d100 roll to determine the quality of an NPC's information, modified by various factors. A failure can result in honest ignorance, misinformation, or deliberate deception.
+- **GM Historical Accuracy Directive:** The GM will endeavor to make all decisions for key historical characters based on a deep understanding of their recorded personalities, motivations, and actions to ensure the highest possible level of historical authenticity.
+
+## 4. Available Skills
+* Athleticism
+* Survival
+* Improvisation
+* Stealth
+* First Aid
+* Observation
+* Melee (Improvised)
+* Unarmed Combat
+* Ranged Combat
+* Tactics
+* Lore
+
+## 5. Starting Gear Options
+*(This section provides the item choices for character creation.)*
+- **Jackets:** Waxed Canvas Jacket, Denim Jacket, Leather Biker Jacket, Hoodie, Rain Poncho, Fleece Jacket, Bomber Jacket, Trench Coat, Sports Coat, Windbreaker, Puffy Vest, Duster Coat, Parka, Blazer, Cardigan, Jean Vest, Army Surplus Jacket, Ski Jacket, Lab Coat, Smoking Jacket.
+- **Shirts:** T-Shirt, Flannel Shirt, Button-down Shirt, Long-sleeve Thermal, Polo Shirt, Henley Shirt, Sweatshirt, V-neck Tee, Graphic Tee, Turtleneck, Tank Top, Hawaiian Shirt, Rugby Shirt, Guayabera, Blouse, Tunic Shirt, Oxford Shirt, Chamois Shirt, Popover, Western Shirt.
+- **Pants:** Blue Jeans, Cargo Pants, Hiking Trousers, Sweatpants, Khakis, Corduroys, Dress Slacks, Ripped Jeans, Leather Pants, Shorts, Joggers, Overalls, Chinos, Tweed Trousers, Linen Trousers, Leggings, Yoga Pants, Capris, Culottes, Bell-bottoms.
+- **Footwear:** Leather Boots, Running Shoes, Hiking Boots, Sandals, Work Boots, Dress Shoes, Sneakers, Crocs, Flip-flops, Cowboy Boots, Loafers, Moccasins, Steel-toed Boots, Wellingtons, Espadrilles, Cleats, High Heels, Slippers, Water Shoes, Oxfords.
+- **Tools:** Smartphone (18% battery), Pen Knife, Multitool, Lighter, Flashlight (LED), Small Notebook & Pencil, Duct Tape (small roll), Spork, Sewing Kit, Compass, Magnifying Glass, Binoculars, Lockpicks, Crowbar, Screwdriver Set, Whetstone, Fishing Line & Hooks, Paracord Bracelet, Zip Ties, Handcuffs.
+- **Weapons:** Combat Knife, Handgun (6 bullets), Baseball Bat (Aluminum), Pepper Spray, Tire Iron, Stun Gun, Taser, Slingshot, Brass Knuckles, Machete, Hatchet, Ice Axe, Bowie Knife, Katana, Nunchucks, Crossbow (3 bolts), Hunting Rifle (2 bullets), Shotgun (2 shells), Flare Gun (1 flare), Blowgun (5 darts).
+- **Miscellaneous:** Wallet (useless cards), Sunglasses, Watch (digital), First Aid Kit (small), Protein Bar, Water Bottle (full), Backpack, Chewing Gum, House Keys, Prescription Glasses, Hip Flask (full of whiskey), Deck of Cards, Harmonica, Zippo Lighter, Sunscreen, Bug Spray, Hand Sanitizer, Earbuds, Portable Charger (dead), Scarf.
+
+## 6. Initial Key Characters
+*(This section provides the starting data for the application to build the `keyCharacters` object in the initial game state.)*
+- **Boudica:** **Significance:** Regional. A tall, formidable woman in her late 30s, standing around 5'11". She has a strong, athletic build, fair skin prone to flushing when angered, and piercing blue eyes. Her most distinguishing feature is a mane of fiery red hair that falls in thick braids to her hips. She typically wears fine wool tunics in shades of blue and green, adorned with heavy gold torcs and arm rings befitting a Celtic queen.
+- **Gaius Suetonius Paulinus:** **Significance:** Provincial. A man in his 50s, approximately 5'9", with the lean, wiry physique of a career soldier. His skin is tanned and weathered from years on campaign, with a network of fine lines around his sharp, intelligent grey eyes. He has close-cropped grey hair and the stern, clean-shaven face of a Roman aristocrat. A thin scar runs along his jawline. He is never seen out of his military attire: a polished cuirass, red cloak, and the legionary's gladius at his hip.
+- **Catus Decianus:** **Significance:** Provincial. A portly, middle-aged man around 5'7" with a soft, pale face, thin lips that easily twist into a sneer, and small, dark eyes. He is overweight, with a noticeable paunch that strains against his expensive, and often slightly garish, civilian robes. His complexion is pasty from a life spent indoors.
+- **Cartimandua:** **Significance:** Regional. A shrewd-looking woman in her 50s, around 5'6". She is still handsome, with high cheekbones and intelligent, dark brown eyes. She keeps her greying dark hair in a complex Roman style of braids and pins. She adopts some Roman fashions, like a pinned stola over her Celtic dress, and is adorned with rich Brigantian gold and jet jewelry.
+- **Venutius:** **Significance:** Regional. A rugged, scarred warrior in his 50s, standing an imposing 6'2". He has a powerful, muscular build, with long limbs and broad shoulders. His face is a roadmap of old battles, with a broken nose and a prominent scar across his left eyebrow. He has long, wild, dark hair, a thick beard, and intense, brooding brown eyes. He wears traditional Celtic garb—wool trousers and a tunic—and is never without his longsword.
+- **Dumnorix:** **Significance:** Local. A pragmatic man in his 40s, with a stocky, powerful build, around 5'8". He has the weathered, sun-beaten face of someone who spends much of their time outdoors, with friendly crinkles around his green eyes. His brown hair and thick beard are neatly trimmed. He wears practical leather and wool clothing, suitable for the northern climate.
+- **Tiberius Claudius Celer:** **Significance:** Regional. A man in his 40s of average height (5'8") and build. He is a former slave from Gaul and has a sharp, calculating gaze in his hazel eyes. He keeps his dark hair short in the Roman style and is always clean-shaven. He dresses in fine, but practical, dark-colored robes, choosing function over ostentation. His hands are surprisingly calloused for a merchant.
+- **The Arch-Druid of Mona (Archetype):** **Significance:** Provincial. An elder whose age is impossible to guess. Gaunt and wiry, with eyes that seem to see through you. Speaks in riddles and pronouncements, wielding immense political and spiritual authority over the Celtic tribes.
+
+## 7. Faction Strengths & Data
+*(This data populates the initial game state.)*
+- **Roman Province (Legions & Administration):** Territory: ~25,000 sq. miles; Military: Very High; Economy: Strong; Political Stability: Low; Technology Level: Roman Provincial.
+- **Roman Auxilia:** Territory: None; Military: High; Economy: None; Political Stability: Medium; Technology Level: Roman Military.
+- **Merchants of Londinium:** Territory: None; Military: None; Economy: Very High; Political Stability: High; Technology Level: Roman Provincial.
+- **The Iceni:** Territory: ~1,500 sq. miles; Military: Medium; Economy: Good; Political Stability: Very Low; Technology Level: Iron Age.
+- **The Brigantes:** Territory: ~12,000 sq. miles; Military: High; Economy: Medium; Political Stability: Critical; Technology Level: Iron Age.
+- **The Parisi:** Territory: ~750 sq. miles; Military: Low; Economy: Medium; Political Stability: High; Technology Level: Iron Age.
+- **The Regni:** Territory: ~1,000 sq. miles; Military: Very Low; Economy: Very High; Political Stability: Very High; Technology Level: Roman Provincial.
+- **The Druid Order:** Territory: None; Military: None; Economy: None; Political Stability: High (but under attack); Technology Level: Lore.
+
+## 8. Starting Situations
+- **wilderness:** You are standing on a low, rolling hill under a vast, grey sky. The air is damp and smells of salt and wet grass. This is the land of the Parisi... A cold wind whips across the hill. You are completely alone. It is late afternoon, and the sky is already beginning to darken.
+- **roman_city:** You awaken with a start, not in your bed, but slumped in a grimy alleyway. The sounds of a bustling city, shouts in Latin and a strange Celtic tongue, fill the air. You are in [CITY]. People in tunics and togas hurry past the alley entrance, ignoring you completely.
+- **tribal_holding:** You find yourself on the edge of a large tribal settlement, a chaotic collection of roundhouses surrounded by a wooden palisade. The smell of woodsmoke and livestock is overpowering. Warriors with long hair and painted faces give you suspicious glances as you stand awkwardly near the gate of [HOLDING].
+
+## 9. Game State Template
+*(This is the structure the app will use to create a new game.)*
+- **Character Sheet:** Name, Physical Description, Health, Survival Status, Attributes, Skills, Languages, Inventory, Location.
+- **Player Knowledge:** An object to store what the player knows. `knownCharacters: {}`, `knownFactions: {}`.
+- **Factions:** Roman Province, Roman Auxilia, Merchants of Londinium, Iceni, Brigantes (Cartimandua), Brigantes (Venutius), Parisi, Regni, The Druid Order.
+- **Inter-Faction Relations:** Wary (Romans-Iceni), Allied (Romans-Cartimandua, Romans-Regni, Romans-Merchants), Hostile (Romans-Venutius, Romans-Druids), Hated (Cartimandua-Venutius), Loyal (Auxilia-Romans), Distrustful (Auxilia-Celts), Transactional (Merchants-Celts), Revered (Tribes-Druids).
+- **Active Storylines:** Paulinus attacking Mona; Decianus auditing Iceni; Celer concerned about trade; Boudica consolidating power; Cartimandua suppressing dissent; Venutius gathering allies; Dumnorix securing resources; Druids scattering.
+- **World State:** Starts at `60.03.03 | 16:00`.
