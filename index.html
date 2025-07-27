@@ -292,7 +292,6 @@
             document.getElementById('load-btn').addEventListener('click', handleLoad);
             document.getElementById('settings-btn').addEventListener('click', openSettingsModal);
             
-            // Sidebar Tabs
             document.getElementById('tab-characters').addEventListener('click', () => switchTab('characters'));
             document.getElementById('tab-factions').addEventListener('click', () => switchTab('factions'));
             document.getElementById('tab-console').addEventListener('click', () => switchTab('console'));
@@ -546,6 +545,19 @@
             document.getElementById('story-container').scrollTop = document.getElementById('story-container').scrollHeight;
         }
 
+        function logToConsole(message, data) {
+            const consolePanel = document.getElementById('console-panel');
+            const entry = document.createElement('div');
+            entry.className = 'mb-2 p-2 bg-gray-700 rounded';
+            let content = `<strong>${message}</strong>`;
+            if (data) {
+                content += `<pre class="whitespace-pre-wrap text-xs">${JSON.stringify(data, null, 2)}</pre>`;
+            }
+            entry.innerHTML = content;
+            consolePanel.appendChild(entry);
+            consolePanel.scrollTop = consolePanel.scrollHeight;
+        }
+
         // --- GAME LOGIC ---
 
         async function handlePlayerAction(event) {
@@ -560,7 +572,9 @@
             document.querySelector('#action-form button').disabled = true;
 
             const fullPrompt = constructFullPrompt(actionText);
+            logToConsole('Sending Prompt to API...', fullPrompt);
             const apiResponse = await callGeminiAPI(fullPrompt);
+            logToConsole('Received Response from API:', apiResponse);
             
             processApiResponse(apiResponse);
 
@@ -643,6 +657,45 @@
             alert('All local data has been cleared.');
         }
 
+        // --- MODAL & UI LOGIC ---
+
+        function openSettingsModal() {
+            const modal = document.getElementById('settings-modal');
+            document.getElementById('settings-api-key').value = apiKey;
+            document.getElementById('settings-char-desc').value = gameState.characterSheet.physicalDescription;
+            modal.classList.remove('hidden');
+            
+            document.getElementById('settings-apply-btn').onclick = applySettings;
+            document.getElementById('settings-cancel-btn').onclick = () => modal.classList.add('hidden');
+            document.getElementById('return-to-start-btn').onclick = () => window.location.reload();
+        }
+
+        function applySettings() {
+            const newApiKey = document.getElementById('settings-api-key').value.trim();
+            const newDesc = document.getElementById('settings-char-desc').value.trim();
+
+            if (newApiKey) {
+                apiKey = newApiKey;
+                localStorage.setItem('rpgApiKey', apiKey);
+            }
+            if (newDesc) {
+                gameState.characterSheet.physicalDescription = newDesc;
+            }
+            
+            saveGameToLocalStorage();
+            updateUI();
+            document.getElementById('settings-modal').classList.add('hidden');
+        }
+
+        function switchTab(tabName) {
+            ['characters', 'factions', 'console'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.remove('active');
+                document.getElementById(`${t}-panel`).classList.add('hidden');
+            });
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            document.getElementById(`${tabName}-panel`).classList.remove('hidden');
+        }
+
         // --- API & DATA PARSING ---
 
         function constructFullPrompt(playerAction) {
@@ -692,6 +745,7 @@
 
             } catch (error) {
                 console.error("Error calling Gemini API:", error);
+                logToConsole("API Error:", error.message);
                 return {
                     narrative: `<p class="text-red-400">Error connecting to the AI. Please check the console for details.</p>`,
                     stateChanges: {}
