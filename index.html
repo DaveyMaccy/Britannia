@@ -38,6 +38,15 @@
             background-color: #1a202c;
             border-left: 2px solid #f6e05e;
         }
+        .sidebar-tab {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-bottom: 2px solid transparent;
+        }
+        .sidebar-tab.active {
+            border-color: #f6e05e; /* yellow-400 */
+            color: #f6e05e;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-gray-200">
@@ -52,14 +61,19 @@
                     <!-- Game state will be rendered here by JavaScript -->
                 </div>
             </div>
-            <div class="mt-auto pt-4 border-t border-gray-700">
-                <h3 class="font-title text-xl text-yellow-300 mb-2">Backup & Transfer</h3>
-                <div class="space-y-2">
-                    <textarea id="save-load-data" class="w-full bg-gray-900 text-xs rounded p-2 h-24 resize-none" placeholder="Save or load your game code here..."></textarea>
-                    <div class="flex gap-2">
-                        <button id="save-btn" class="w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Save</button>
-                        <button id="load-btn" class="w-1/2 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Load</button>
+            <div class="mt-auto pt-4 border-t border-gray-700 space-y-4">
+                <div>
+                    <h3 class="font-title text-xl text-yellow-300 mb-2">Backup & Transfer</h3>
+                    <div class="space-y-2">
+                        <textarea id="save-load-data" class="w-full bg-gray-900 text-xs rounded p-2 h-24 resize-none" placeholder="Save or load your game code here..."></textarea>
+                        <div class="flex gap-2">
+                            <button id="save-btn" class="w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Save</button>
+                            <button id="load-btn" class="w-1/2 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Load</button>
+                        </div>
                     </div>
+                </div>
+                 <div>
+                    <button id="settings-btn" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Settings</button>
                 </div>
             </div>
         </aside>
@@ -82,14 +96,14 @@
 
         <!-- Right Sidebar: Key Characters & Factions -->
         <aside class="w-full md:w-1/4 bg-gray-800 p-4 overflow-y-auto h-screen">
-            <div class="h-1/2 pb-2">
-                <h2 class="font-title text-2xl text-yellow-300 border-b-2 border-yellow-500 pb-2 mb-4">Known Characters</h2>
-                <div id="key-characters-display" class="overflow-y-auto h-full"></div>
+            <div class="flex border-b-2 border-gray-700 mb-4">
+                <div id="tab-characters" class="sidebar-tab active">Characters</div>
+                <div id="tab-factions" class="sidebar-tab">Factions</div>
+                <div id="tab-console" class="sidebar-tab">Console</div>
             </div>
-            <div class="h-1/2 pt-2 border-t-2 border-gray-700">
-                 <h2 class="font-title text-2xl text-yellow-300 border-b-2 border-yellow-500 pb-2 mb-4">Factions</h2>
-                <div id="factions-display" class="overflow-y-auto h-full"></div>
-            </div>
+            <div id="characters-panel" class="overflow-y-auto h-full"></div>
+            <div id="factions-panel" class="overflow-y-auto h-full hidden"></div>
+            <div id="console-panel" class="overflow-y-auto h-full hidden text-xs font-mono"></div>
         </aside>
 
     </div>
@@ -163,6 +177,30 @@
                 <button id="create-char-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-colors ml-auto hidden">Begin Journey</button>
             </div>
 
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-800 p-8 rounded-lg max-w-lg w-full text-white">
+            <h2 class="font-title text-3xl mb-6 text-yellow-400">Settings</h2>
+            <div class="space-y-4">
+                <div>
+                    <label for="settings-api-key" class="block mb-2">Gemini API Key:</label>
+                    <input type="password" id="settings-api-key" class="w-full bg-gray-700 rounded px-3 py-2">
+                </div>
+                <div>
+                    <label for="settings-char-desc" class="block mb-2">Edit Character Appearance:</label>
+                    <textarea id="settings-char-desc" class="w-full bg-gray-700 rounded px-3 py-2" rows="4"></textarea>
+                </div>
+                <div>
+                    <button id="return-to-start-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Return to Start Screen (Lose Unsaved Progress)</button>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end gap-4">
+                <button id="settings-cancel-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">Cancel</button>
+                <button id="settings-apply-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">Apply & Close</button>
+            </div>
         </div>
     </div>
 
@@ -253,6 +291,11 @@
             document.getElementById('save-btn').addEventListener('click', handleSave);
             document.getElementById('load-btn').addEventListener('click', handleLoad);
             document.getElementById('settings-btn').addEventListener('click', openSettingsModal);
+            
+            // Sidebar Tabs
+            document.getElementById('tab-characters').addEventListener('click', () => switchTab('characters'));
+            document.getElementById('tab-factions').addEventListener('click', () => switchTab('factions'));
+            document.getElementById('tab-console').addEventListener('click', () => switchTab('console'));
         }
 
         function setApiKey() {
@@ -364,9 +407,8 @@
         }
 
         function createCharacter() {
-            // This function now needs to build the initial gameState from scratch
-            let newGameState = {};
-            
+            gameState = JSON.parse(JSON.stringify(scenarioData.gameStateTemplate));
+
             const name = document.getElementById('char-name').value;
             const gender = document.querySelector('input[name="gender"]:checked')?.value;
             const desc = document.getElementById('char-desc').value;
@@ -387,41 +429,22 @@
                 return;
             }
 
-            // Build the gameState object
-            newGameState.turnCounter = 1;
-            newGameState.characterSheet = {
-                name: name,
-                physicalDescription: `Gender: ${gender}. ${desc}`,
-                health: "Healthy",
-                survivalStatus: "Sated, Hydrated, Warm",
-                attributes: {},
-                skills: {},
-                languages: { "Common Brittonic": brittonicFluency, "Vulgar Latin": latinFluency },
-                inventory: { currency: 0, items: selectedGear },
-                location: "Parisi Territory",
-                factionReputation: {}
-            };
-            newGameState.playerKnowledge = { knownCharacters: {}, knownFactions: {} };
-            newGameState.worldState = { currentDate: "60.03.03", currentTime: "16:00", majorEvents: ["Arrived in the territory of the Parisi."] };
-            newGameState.keyCharacters = scenarioData.initial_key_characters;
-            newGameState.factions = scenarioData.faction_data;
-            
-            Object.keys(newGameState.factions).forEach(f => {
-                newGameState.characterSheet.factionReputation[f] = 0;
-            });
+            gameState.characterSheet.name = name;
+            gameState.characterSheet.physicalDescription = `Gender: ${gender}. ${desc}`;
+            gameState.characterSheet.languages["Common Brittonic"] = brittonicFluency;
+            gameState.characterSheet.languages["Vulgar Latin"] = latinFluency;
+            gameState.characterSheet.inventory.items = selectedGear;
 
             ['STR', 'DEX', 'WITS', 'CHA'].forEach(attr => {
                 let roll = rollDice(5, 20);
                 if (attr === bonusAttr) roll += 25;
-                newGameState.characterSheet.attributes[attr] = Math.min(100, roll);
+                gameState.characterSheet.attributes[attr] = Math.min(100, roll);
             });
 
             scenarioData.available_skills.forEach(skill => {
                 let roll = selectedSkills.includes(skill) ? rollDice(3, 20) + 25 : rollDice(3, 20);
-                newGameState.characterSheet.skills[skill] = { value: roll, type: selectedSkills.includes(skill) ? 'core' : 'other' };
+                gameState.characterSheet.skills[skill] = { value: roll, type: selectedSkills.includes(skill) ? 'core' : 'other' };
             });
-
-            gameState = newGameState;
 
             let startingMessage = scenarioData.starting_situations[startLocation] || scenarioData.starting_situations.wilderness;
             
@@ -451,17 +474,17 @@
 
         // --- UI & RENDER FUNCTIONS ---
         function renderFactions() {
-            const display = document.getElementById('factions-display');
+            const display = document.getElementById('factions-panel');
             const factions = gameState.factions || {};
              display.innerHTML = Object.keys(factions).map(name => `
-                <div class="mb-2 text-sm">
+                <div class="mb-2 text-sm p-2 bg-gray-700 rounded">
                     <p><strong>${name}:</strong> ${gameState.characterSheet.factionReputation[name] || 0} Rep</p>
                 </div>
             `).join('');
         }
         
         function renderKeyCharacters() {
-            const display = document.getElementById('key-characters-display');
+            const display = document.getElementById('characters-panel');
             const knownChars = gameState.playerKnowledge.knownCharacters || {};
             if (Object.keys(knownChars).length === 0) {
                 display.innerHTML = `<p class="text-gray-500 italic">You have not met any key characters yet.</p>`;
