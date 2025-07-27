@@ -43,12 +43,12 @@ This engine simulates background events.
 ## CORE GAME MECHANICS
 
 **1. Character Creation:**
-- **Attributes:** The app will automatically roll `5d20` to determine the starting value for each of the four attributes. The player's choice of a "strongest attribute" will add a `+25` bonus to the result of that roll.
+- **Process:** The player will create their character through a multi-stage process in the app, choosing their name, gender, appearance, attributes, skills, languages, starting inventory, and starting location.
+- **Attributes:** The app will automatically roll `5d20` to determine the starting value for each of the four attributes. The player's choice of a "strongest attribute" will add a `+25` bonus to the result of that roll (or no bonus if "None" is chosen).
 - **Skills:** All skills are rated from 1-100. The app will automatically roll dice to determine their starting values.
-    - The three "core skills" chosen by the player start with a value of `3d20 + 25`.
+    - The "core skills" chosen by the player (0 to 3) start with a value of `3d20 + 25`.
     - All other skills from the scenario's list start with a base value of `3d20`.
-- **Appearance:** The player provides a physical description during creation.
-- **Languages:** The player chooses their starting language fluency during creation.
+- **Inventory:** The player's starting inventory is determined by their choices during character creation.
 
 **2. Action Resolution (d100 Roll-Under):**
 - **If Skilled:** Roll d100 <= Skill Value.
