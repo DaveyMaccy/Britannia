@@ -9,7 +9,7 @@ You have arrived at a powder keg moment. In the south-east, Prasutagus, the clie
 ## 3. Scenario-Specific Rules
 - **Magic & The Supernatural:** This is a strictly historical setting. Magic is disabled. The beliefs of the Celts and Romans in their gods and omens are very real to them, but there are no fireballs or magical spells.
 - **Languages & Dialects:**
-    - **Default Setting:** This scenario uses the "Easy" language setting. Your character starts with 100% fluency in Common Brittonic and Vulgar Latin.
+    - **Default Setting:** This scenario uses the "Easy" language setting. The character starts with 100% fluency in Common Brittonic and Vulgar Latin.
     - **Common Brittonic:** This is the base language understood by all Celtic tribes in Britannia, though each has its own distinct dialect.
     - **Dialects:** Each tribe speaks a dialect of Brittonic (e.g., Icenian, Brigantian). Learning a local dialect is tracked like a language and can improve relations with that tribe while potentially causing friction with their enemies.
     - **NPC Languages:** Most tribal peasants will only speak their local dialect. Traders, travelers, and leaders are often multilingual, typically speaking multiple dialects and Vulgar Latin.
@@ -39,7 +39,17 @@ You have arrived at a powder keg moment. In the south-east, Prasutagus, the clie
 * Tactics
 * Lore
 
-## 5. Initial Key Characters
+## 5. Starting Gear Options
+*(This section provides the item choices for character creation.)*
+- **Jackets:** Waxed Canvas Jacket, Denim Jacket, Leather Biker Jacket, Hoodie, Rain Poncho, Fleece Jacket, Bomber Jacket, Trench Coat, Sports Coat, Windbreaker, Puffy Vest, Duster Coat, Parka, Blazer, Cardigan, Jean Vest, Army Surplus Jacket, Ski Jacket, Lab Coat, Smoking Jacket.
+- **Shirts:** T-Shirt, Flannel Shirt, Button-down Shirt, Long-sleeve Thermal, Polo Shirt, Henley Shirt, Sweatshirt, V-neck Tee, Graphic Tee, Turtleneck, Tank Top, Hawaiian Shirt, Rugby Shirt, Guayabera, Blouse, Tunic Shirt, Oxford Shirt, Chamois Shirt, Popover, Western Shirt.
+- **Pants:** Blue Jeans, Cargo Pants, Hiking Trousers, Sweatpants, Khakis, Corduroys, Dress Slacks, Ripped Jeans, Leather Pants, Shorts, Joggers, Overalls, Chinos, Tweed Trousers, Linen Trousers, Leggings, Yoga Pants, Capris, Culottes, Bell-bottoms.
+- **Footwear:** Leather Boots, Running Shoes, Hiking Boots, Sandals, Work Boots, Dress Shoes, Sneakers, Crocs, Flip-flops, Cowboy Boots, Loafers, Moccasins, Steel-toed Boots, Wellingtons, Espadrilles, Cleats, High Heels, Slippers, Water Shoes, Oxfords.
+- **Tools:** Smartphone (18% battery), Pen Knife, Multitool, Lighter, Flashlight (LED), Small Notebook & Pencil, Duct Tape (small roll), Spork, Sewing Kit, Compass, Magnifying Glass, Binoculars, Lockpicks, Crowbar, Screwdriver Set, Whetstone, Fishing Line & Hooks, Paracord Bracelet, Zip Ties, Handcuffs.
+- **Weapons:** Combat Knife, Handgun (6 bullets), Baseball Bat (Aluminum), Pepper Spray, Tire Iron, Stun Gun, Taser, Slingshot, Brass Knuckles, Machete, Hatchet, Ice Axe, Bowie Knife, Katana, Nunchucks, Crossbow (3 bolts), Hunting Rifle (2 bullets), Shotgun (2 shells), Flare Gun (1 flare), Blowgun (5 darts).
+- **Miscellaneous:** Wallet (useless cards), Sunglasses, Watch (digital), First Aid Kit (small), Protein Bar, Water Bottle (full), Backpack, Chewing Gum, House Keys, Prescription Glasses, Hip Flask (full of whiskey), Deck of Cards, Harmonica, Zippo Lighter, Sunscreen, Bug Spray, Hand Sanitizer, Earbuds, Portable Charger (dead), Scarf.
+
+## 6. Initial Key Characters
 *(This section provides the starting data for the application to build the `keyCharacters` object in the initial game state.)*
 - **Boudica:** **Significance:** Regional. A tall, formidable woman in her late 30s, standing around 5'11". She has a strong, athletic build, fair skin prone to flushing when angered, and piercing blue eyes. Her most distinguishing feature is a mane of fiery red hair that falls in thick braids to her hips. She typically wears fine wool tunics in shades of blue and green, adorned with heavy gold torcs and arm rings befitting a Celtic queen.
 - **Gaius Suetonius Paulinus:** **Significance:** Provincial. A man in his 50s, approximately 5'9", with the lean, wiry physique of a career soldier. His skin is tanned and weathered from years on campaign, with a network of fine lines around his sharp, intelligent grey eyes. He has close-cropped grey hair and the stern, clean-shaven face of a Roman aristocrat. A thin scar runs along his jawline. He is never seen out of his military attire: a polished cuirass, red cloak, and the legionary's gladius at his hip.
@@ -50,7 +60,7 @@ You have arrived at a powder keg moment. In the south-east, Prasutagus, the clie
 - **Tiberius Claudius Celer:** **Significance:** Regional. A man in his 40s of average height (5'8") and build. He is a former slave from Gaul and has a sharp, calculating gaze in his hazel eyes. He keeps his dark hair short in the Roman style and is always clean-shaven. He dresses in fine, but practical, dark-colored robes, choosing function over ostentation. His hands are surprisingly calloused for a merchant.
 - **The Arch-Druid of Mona (Archetype):** **Significance:** Provincial. An elder whose age is impossible to guess. Gaunt and wiry, with eyes that seem to see through you. Speaks in riddles and pronouncements, wielding immense political and spiritual authority over the Celtic tribes.
 
-## 6. Faction Strengths & Data
+## 7. Faction Strengths & Data
 *(This data populates the initial game state.)*
 - **Roman Province (Legions & Administration):** Territory: ~25,000 sq. miles; Military: Very High; Economy: Strong; Political Stability: Low; Technology Level: Roman Provincial.
 - **Roman Auxilia:** Territory: None; Military: High; Economy: None; Political Stability: Medium; Technology Level: Roman Military.
@@ -61,15 +71,17 @@ You have arrived at a powder keg moment. In the south-east, Prasutagus, the clie
 - **The Regni:** Territory: ~1,000 sq. miles; Military: Very Low; Economy: Very High; Political Stability: Very High; Technology Level: Roman Provincial.
 - **The Druid Order:** Territory: None; Military: None; Economy: None; Political Stability: High (but under attack); Technology Level: Lore.
 
-## 7. Geography & Travel
+## 8. Geography & Travel
 - **Capitals & Major Settlements:** Romans: Camulodunum (Colchester) & Londinium (London); Iceni: Venta Icenorum (Caistor St Edmund); Brigantes: Stanwick Iron Age Fort; Parisi: Near modern-day Brough; Regni: Noviomagus Reginorum (Chichester).
 - **Estimated Distances:** Parisi to Stanwick: ~70 miles; Parisi to Venta Icenorum: ~140 miles; Venta Icenorum to Camulodunum: ~40 miles; Camulodunum to Londinium: ~55 miles.
 - **Travel Speeds:** On Foot: Base 15 miles/day + Athleticism bonus; Horseback: ~30 miles/day; Horse-drawn Cart: ~20 miles/day; Ox-drawn Cart: ~10 miles/day.
 
-## 8. Starting Situation
-You feel a gut-wrenching lurch... You are standing on a low, rolling hill under a vast, grey sky. The air is damp and smells of salt and wet grass. This is the land of the Parisi... A cold wind whips across the hill. You are completely alone. It is late afternoon, around 16:00, and the sky is already beginning to darken. You need to find shelter, and soon. What do you do?
+## 9. Starting Situations
+- **wilderness:** You are standing on a low, rolling hill under a vast, grey sky. The air is damp and smells of salt and wet grass. This is the land of the Parisi... A cold wind whips across the hill. You are completely alone. It is late afternoon, and the sky is already beginning to darken.
+- **roman_city:** You awaken with a start, not in your bed, but slumped in a grimy alleyway. The sounds of a bustling city, shouts in Latin and a strange Celtic tongue, fill the air. You are in [CITY]. People in tunics and togas hurry past the alley entrance, ignoring you completely.
+- **tribal_holding:** You find yourself on the edge of a large tribal settlement, a chaotic collection of roundhouses surrounded by a wooden palisade. The smell of woodsmoke and livestock is overpowering. Warriors with long hair and painted faces give you suspicious glances as you stand awkwardly near the gate of [HOLDING].
 
-## 9. Game State Template
+## 10. Game State Template
 *(This is the structure the app will use to create a new game.)*
 - **Character Sheet:** Name, Physical Description, Health, Survival Status, Attributes, Skills, Languages, Inventory, Location.
 - **Player Knowledge:** An object to store what the player knows. `knownCharacters: {}`, `knownFactions: {}`.
