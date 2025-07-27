@@ -264,7 +264,10 @@
             const savedApiKey = localStorage.getItem('rpgApiKey');
             if (savedApiKey) apiKeyInput.value = savedApiKey;
             
-            if (localStorage.getItem('rpgGameState')) {
+            const savedGame = localStorage.getItem('rpgGameState');
+            const hasValidSave = savedGame && JSON.parse(savedGame).turnCounter > 0;
+
+            if (hasValidSave) {
                 continueBtn.disabled = false;
                 continueBtn.addEventListener('click', () => {
                     if (setApiKey()) loadGameFromLocalStorage();
@@ -274,7 +277,13 @@
             }
             
             newGameBtn.addEventListener('click', () => {
-                if (setApiKey()) showSetupModal();
+                if (hasValidSave) {
+                    if (confirm('Starting a new game will delete your previous locally stored game files. Are you sure?')) {
+                         if (setApiKey()) showSetupModal();
+                    }
+                } else {
+                    if (setApiKey()) showSetupModal();
+                }
             });
             
             clearDataBtn.addEventListener('click', clearLocalStorage);
@@ -712,6 +721,17 @@
                 }
             }
         };
+
+        // --- SCRIPT EXECUTION START ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await loadGameData();
+                initializeStartScreen();
+            } catch (error) {
+                document.body.innerHTML = `<div class="text-red-400 p-8"><strong>Error loading game files:</strong> ${error.message}.<br><br>Please ensure <strong>CoreRules.txt</strong> and <strong>Scenario.txt</strong> are in the same folder as this index.html file.</div>`;
+                console.error(error);
+            }
+        });
     </script>
 </body>
 </html>
