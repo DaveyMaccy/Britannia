@@ -136,9 +136,18 @@
                     <!-- Page 1: Appearance -->
                     <div id="creation-page-1" class="creation-page">
                         <h3 class="font-bold text-lg mb-2 text-yellow-300">Step 1: Appearance</h3>
-                        <div class="mb-4"><label for="char-name" class="block mb-2">Name:</label><input type="text" id="char-name" class="w-full bg-gray-700 rounded px-3 py-2" value="Character"></div>
-                        <div class="mb-4"><label class="block mb-2">Gender:</label><div class="flex gap-4"><label><input type="radio" name="gender" value="Male" class="mr-2">Male</label><label><input type="radio" name="gender" value="Female" class="mr-2">Female</label></div></div>
-                        <div class="mb-4"><label for="char-desc" class="block mb-2">Description:</label><textarea id="char-desc" class="w-full bg-gray-700 rounded px-3 py-2" rows="4" placeholder="Describe your character. Include at a minimum: Height, Weight, Build (e.g., slender, muscular), Hair Color, and Eye Color."></textarea></div>
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+                            <div><label for="char-name" class="block mb-1">Name:</label><input type="text" id="char-name" class="w-full bg-gray-700 rounded px-3 py-2" value="Character"></div>
+                            <div><label class="block mb-1">Gender:</label><div class="flex items-center h-full gap-4"><label><input type="radio" name="gender" value="Male" class="mr-2">Male</label><label><input type="radio" name="gender" value="Female" class="mr-2">Female</label></div></div>
+                            <div><label for="char-height" class="block mb-1">Height:</label><input type="text" id="char-height" class="w-full bg-gray-700 rounded px-3 py-2" placeholder="e.g., 6'1&quot;"></div>
+                            <div><label for="char-weight" class="block mb-1">Weight:</label><input type="text" id="char-weight" class="w-full bg-gray-700 rounded px-3 py-2" placeholder="e.g., 180 lbs"></div>
+                            <div><label for="char-build" class="block mb-1">Build:</label><select id="char-build" class="w-full bg-gray-700 rounded px-3 py-2"><option>Slender</option><option>Athletic</option><option>Average</option><option>Stocky</option><option>Heavyset</option></select></div>
+                            <div><label for="char-skin" class="block mb-1">Skin Color:</label><select id="char-skin" class="w-full bg-gray-700 rounded px-3 py-2"><option>Fair</option><option>Light</option><option>Tan</option><option>Olive</option><option>Brown</option><option>Dark</option></select></div>
+                            <div><label for="char-hair-style" class="block mb-1">Hair Style:</label><select id="char-hair-style" class="w-full bg-gray-700 rounded px-3 py-2"><option>Short</option><option>Medium</option><option>Long</option><option>Bald</option><option>Braided</option><option>Undercut</option></select></div>
+                            <div><label for="char-hair-color" class="block mb-1">Hair Color:</label><select id="char-hair-color" class="w-full bg-gray-700 rounded px-3 py-2"><option>Black</option><option>Brown</option><option>Blonde</option><option>Red</option><option>Grey</option><option>White</option></select></div>
+                            <div><label for="char-eye-color" class="block mb-1">Eye Color:</label><select id="char-eye-color" class="w-full bg-gray-700 rounded px-3 py-2"><option>Brown</option><option>Blue</option><option>Green</option><option>Hazel</option><option>Grey</option></select></div>
+                        </div>
+                        <div><label for="char-details" class="block mb-1">Additional Details:</label><textarea id="char-details" class="w-full bg-gray-700 rounded px-3 py-2" rows="3" placeholder="e.g., A long scar across his left cheek, sharp jawline, etc."></textarea></div>
                     </div>
 
                     <!-- Page 2: Abilities -->
@@ -179,30 +188,6 @@
                 <button id="create-char-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-colors ml-auto hidden">Begin Journey</button>
             </div>
 
-        </div>
-    </div>
-
-    <!-- Settings Modal -->
-    <div id="settings-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
-        <div class="bg-gray-800 p-8 rounded-lg max-w-lg w-full text-white">
-            <h2 class="font-title text-3xl mb-6 text-yellow-400">Settings</h2>
-            <div class="space-y-4">
-                <div>
-                    <label for="settings-api-key" class="block mb-2">API Key:</label>
-                    <input type="password" id="settings-api-key" class="w-full bg-gray-700 rounded px-3 py-2">
-                </div>
-                <div>
-                    <label for="settings-char-desc" class="block mb-2">Edit Character Appearance:</label>
-                    <textarea id="settings-char-desc" class="w-full bg-gray-700 rounded px-3 py-2" rows="4"></textarea>
-                </div>
-                <div>
-                    <button id="return-to-start-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Return to Start Screen (Lose Unsaved Progress)</button>
-                </div>
-            </div>
-            <div class="mt-6 flex justify-end gap-4">
-                <button id="settings-cancel-btn" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">Cancel</button>
-                <button id="settings-apply-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-colors">Apply & Close</button>
-            </div>
         </div>
     </div>
 
@@ -409,11 +394,19 @@
         }
 
         function createCharacter() {
-            gameState = JSON.parse(JSON.stringify(scenarioData.gameStateTemplate));
-
+            // This function now needs to build the initial gameState from scratch
+            let newGameState = {};
+            
             const name = document.getElementById('char-name').value;
             const gender = document.querySelector('input[name="gender"]:checked')?.value;
-            const desc = document.getElementById('char-desc').value;
+            const height = document.getElementById('char-height').value;
+            const weight = document.getElementById('char-weight').value;
+            const build = document.getElementById('char-build').value;
+            const skin = document.getElementById('char-skin').value;
+            const hairStyle = document.getElementById('char-hair-style').value;
+            const hairColor = document.getElementById('char-hair-color').value;
+            const eyeColor = document.getElementById('char-eye-color').value;
+            const details = document.getElementById('char-details').value;
             
             const bonusAttr = document.getElementById('attr-bonus').value;
             const selectedSkills = Array.from(document.querySelectorAll('.skill-checkbox:checked')).map(cb => cb.value);
@@ -425,28 +418,50 @@
 
             const startLocation = document.querySelector('input[name="start-location"]:checked').value;
             
-            if (!name || !desc || !gender || selectedSkills.length > 3) {
-                alert('Please ensure all fields on Page 1 & 2 are complete, and you have selected 0 to 3 core skills.');
+            if (!name || !gender || !height || !weight) {
+                alert('Please ensure all fields on Page 1 are complete.');
                 navigateCreation(1 - creationPage);
                 return;
             }
 
-            gameState.characterSheet.name = name;
-            gameState.characterSheet.physicalDescription = `Gender: ${gender}. ${desc}`;
-            gameState.characterSheet.languages["Common Brittonic"] = brittonicFluency;
-            gameState.characterSheet.languages["Vulgar Latin"] = latinFluency;
-            gameState.characterSheet.inventory.items = selectedGear;
+            // Assemble the description string
+            const physicalDescription = `Gender: ${gender}. ${height}, ${weight}, ${build} build. ${hairColor} ${hairStyle} hair, ${eyeColor} eyes, and ${skin} skin. ${details}`;
+
+            // Build the gameState object
+            newGameState.turnCounter = 1;
+            newGameState.characterSheet = {
+                name: name,
+                physicalDescription: physicalDescription,
+                health: "Healthy",
+                survivalStatus: "Sated, Hydrated, Warm",
+                attributes: {},
+                skills: {},
+                languages: { "Common Brittonic": brittonicFluency, "Vulgar Latin": latinFluency },
+                inventory: { currency: 0, items: selectedGear },
+                location: "Parisi Territory",
+                factionReputation: {}
+            };
+            newGameState.playerKnowledge = { knownCharacters: {}, knownFactions: {} };
+            newGameState.worldState = { currentDate: "60.03.03", currentTime: "16:00", majorEvents: ["Arrived in the territory of the Parisi."] };
+            newGameState.keyCharacters = scenarioData.initial_key_characters;
+            newGameState.factions = scenarioData.faction_data;
+            
+            Object.keys(newGameState.factions).forEach(f => {
+                newGameState.characterSheet.factionReputation[f] = 0;
+            });
 
             ['STR', 'DEX', 'WITS', 'CHA'].forEach(attr => {
                 let roll = rollDice(5, 20);
                 if (attr === bonusAttr) roll += 25;
-                gameState.characterSheet.attributes[attr] = Math.min(100, roll);
+                newGameState.characterSheet.attributes[attr] = Math.min(100, roll);
             });
 
             scenarioData.available_skills.forEach(skill => {
                 let roll = selectedSkills.includes(skill) ? rollDice(3, 20) + 25 : rollDice(3, 20);
-                gameState.characterSheet.skills[skill] = { value: roll, type: selectedSkills.includes(skill) ? 'core' : 'other' };
+                newGameState.characterSheet.skills[skill] = { value: roll, type: selectedSkills.includes(skill) ? 'core' : 'other' };
             });
+
+            gameState = newGameState;
 
             let startingMessage = scenarioData.starting_situations[startLocation] || scenarioData.starting_situations.wilderness;
             
