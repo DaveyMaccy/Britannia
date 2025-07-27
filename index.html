@@ -502,7 +502,8 @@
                 alert("API Key is not set. Please refresh and enter your key.");
                 return { narrative: `<p class="text-red-400">Error: API Key is missing.</p>`, stateChanges: {} };
             }
-            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+            // UPDATED: This line now points to the Gemini 1.5 Pro model
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro-latest:generateContent?key=${apiKey}`;
 
             const payload = {
                 contents: [{ parts: [{ text: prompt }] }],
