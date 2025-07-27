@@ -233,29 +233,22 @@
                 });
             }
             
-            const templateTextMatch = text.match(/## 9\. Game State Template\n([\s\S]*)/);
-            let gameStateTemplate = {};
-            if (templateTextMatch) {
-                // This is a simplified parser for the template structure. It's not a full YAML/JSON parser.
-                // It builds a basic object based on the structure in the scenario file.
-                // This is more robust than the previous hardcoded version.
-                gameStateTemplate = {
-                    turnCounter: 1,
-                    characterSheet: {
-                        name: "", physicalDescription: "", health: "Healthy", survivalStatus: "Sated, Hydrated, Warm",
-                        attributes: { STR: 0, DEX: 0, WITS: 0, CHA: 0 },
-                        skills: {},
-                        languages: { "Common Brittonic": 100, "Vulgar Latin": 100 },
-                        inventory: { currency: 0, items: [] },
-                        location: "Parisi Territory",
-                        factionReputation: { "Roman Province": 0, "Roman Auxilia": 0, "Merchants of Londinium": 0, "Iceni": 0, "Brigantes (Cartimandua)": 0, "Brigantes (Venutius)": 0, "Parisi": 0, "Regni": 0, "The Druid Order": 0 }
-                    },
-                    playerKnowledge: { knownCharacters: {}, knownFactions: {} },
-                    worldState: { currentDate: "60.03.03", currentTime: "16:00", majorEvents: ["Arrived in the territory of the Parisi."] },
-                    keyCharacters: {}, // Will be populated from scenario
-                    factions: {} // Will be populated from scenario
-                };
-            }
+            const gameStateTemplate = {
+                turnCounter: 1,
+                characterSheet: {
+                    name: "", physicalDescription: "", health: "Healthy", survivalStatus: "Sated, Hydrated, Warm",
+                    attributes: { STR: 0, DEX: 0, WITS: 0, CHA: 0 },
+                    skills: {},
+                    languages: { "Common Brittonic": 100, "Vulgar Latin": 100 },
+                    inventory: { currency: 0, items: [] },
+                    location: "Parisi Territory",
+                    factionReputation: { "Roman Province": 0, "Roman Auxilia": 0, "Merchants of Londinium": 0, "Iceni": 0, "Brigantes (Cartimandua)": 0, "Brigantes (Venutius)": 0, "Parisi": 0, "Regni": 0, "The Druid Order": 0 }
+                },
+                playerKnowledge: { knownCharacters: {}, knownFactions: {} },
+                worldState: { currentDate: "60.03.03", currentTime: "16:00", majorEvents: ["Arrived in the territory of the Parisi."] },
+                keyCharacters: {},
+                factions: {}
+            };
             
             return { 
                 availableSkills: skills, 
