@@ -205,7 +205,6 @@
         }
 
         function parseScenario(text) {
-            // This is a very simple parser. A more robust version would handle more complex structures.
             const skillsMatch = text.match(/## 4\. Available Skills\n([\s\S]*?)\n##/);
             const skills = skillsMatch ? skillsMatch[1].split('\n').map(s => s.replace(/[\*\-]\s/g, '').trim()).filter(Boolean) : [];
 
@@ -286,7 +285,6 @@
                 if (setApiKey()) showSetupModal();
             });
             
-            // Setup these listeners once
             document.getElementById('action-form').addEventListener('submit', handlePlayerAction);
             document.getElementById('save-btn').addEventListener('click', handleSave);
             document.getElementById('load-btn').addEventListener('click', handleLoad);
@@ -305,6 +303,9 @@
         }
 
         function showSetupModal() {
+            // FIX: Clear any old save data when starting a new game
+            localStorage.removeItem('rpgGameState');
+
             document.getElementById('start-modal').classList.add('hidden');
             const modal = document.getElementById('setup-modal');
             const skillsContainer = document.getElementById('core-skills-selection');
@@ -313,7 +314,7 @@
             gearContainer.innerHTML = '';
             
             scenarioData.availableSkills.forEach(skill => {
-                skillsContainer.innerHTML += `<div><label data-info="${skill.toLowerCase().replace(/\s/g, '_')}"><input type="checkbox" id="skill-${skill.toLowerCase()}" value="${skill}" class="skill-checkbox mr-2">${skill}</label></div>`;
+                skillsContainer.innerHTML += `<div><label data-info="${skill.toLowerCase().replace(/\s/g, '_').replace(/[()]/g, '')}"><input type="checkbox" id="skill-${skill.toLowerCase()}" value="${skill}" class="skill-checkbox mr-2">${skill}</label></div>`;
             });
             
             Object.entries(scenarioData.startingGear).forEach(([category, items]) => {
@@ -382,7 +383,7 @@
                 stealth: `<h3>Stealth</h3><p>Allows you to move unseen and unheard, useful for avoiding conflict or gaining a tactical advantage.</p>`,
                 first_aid: `<h3>First Aid</h3><p>Your ability to treat wounds and injuries. Can be significantly boosted by applying correct modern medical knowledge.</p>`,
                 observation: `<h3>Observation</h3><p>Your ability to notice fine details, spot ambushes, or discern if someone is lying.</p>`,
-                'melee_(improvised)': `<h3>Melee (Improvised)</h3><p>Fighting with whatever you can find, from your pen knife to a tree branch. Represents untrained close-quarters combat.</p>`,
+                melee_improvised: `<h3>Melee (Improvised)</h3><p>Fighting with whatever you can find, from your pen knife to a tree branch. Represents untrained close-quarters combat.</p>`,
                 unarmed_combat: `<h3>Unarmed Combat</h3><p>Your skill in hand-to-hand fighting, using fists, feet, and grappling.</p>`,
                 ranged_combat: `<h3>Ranged Combat</h3><p>Your proficiency with projectile weapons like bows, slings, or even a modern firearm.</p>`,
                 tactics: `<h3>Tactics</h3><p>Your understanding of battlefield strategy. Can be used to command others or gain an advantage in a fight.</p>`,
