@@ -97,11 +97,13 @@
         <!-- Right Sidebar: Key Characters & Factions -->
         <aside class="w-full md:w-1/4 bg-gray-800 p-4 overflow-y-auto h-screen">
             <div class="flex border-b-2 border-gray-700 mb-4">
-                <div id="tab-characters" class="sidebar-tab active">Characters</div>
+                <div id="tab-character" class="sidebar-tab active">Character</div>
+                <div id="tab-known-characters" class="sidebar-tab">Known NPCs</div>
                 <div id="tab-factions" class="sidebar-tab">Factions</div>
                 <div id="tab-console" class="sidebar-tab">Console</div>
             </div>
-            <div id="characters-panel" class="overflow-y-auto h-full"></div>
+            <div id="character-panel" class="overflow-y-auto h-full"></div>
+            <div id="known-characters-panel" class="overflow-y-auto h-full hidden"></div>
             <div id="factions-panel" class="overflow-y-auto h-full hidden"></div>
             <div id="console-panel" class="overflow-y-auto h-full hidden text-xs font-mono"></div>
         </aside>
@@ -186,7 +188,7 @@
             <h2 class="font-title text-3xl mb-6 text-yellow-400">Settings</h2>
             <div class="space-y-4">
                 <div>
-                    <label for="settings-api-key" class="block mb-2">Gemini API Key:</label>
+                    <label for="settings-api-key" class="block mb-2">API Key:</label>
                     <input type="password" id="settings-api-key" class="w-full bg-gray-700 rounded px-3 py-2">
                 </div>
                 <div>
@@ -292,7 +294,8 @@
             document.getElementById('load-btn').addEventListener('click', handleLoad);
             document.getElementById('settings-btn').addEventListener('click', openSettingsModal);
             
-            document.getElementById('tab-characters').addEventListener('click', () => switchTab('characters'));
+            document.getElementById('tab-character').addEventListener('click', () => switchTab('character'));
+            document.getElementById('tab-known-characters').addEventListener('click', () => switchTab('known-characters'));
             document.getElementById('tab-factions').addEventListener('click', () => switchTab('factions'));
             document.getElementById('tab-console').addEventListener('click', () => switchTab('console'));
         }
@@ -301,7 +304,7 @@
             const apiKeyInput = document.getElementById('api-key-input');
             const key = apiKeyInput.value.trim();
             if (!key) {
-                alert('Please enter a valid Gemini API Key to continue.');
+                alert('Please enter a valid API Key to continue.');
                 return false;
             }
             apiKey = key;
@@ -483,7 +486,7 @@
         }
         
         function renderKeyCharacters() {
-            const display = document.getElementById('characters-panel');
+            const display = document.getElementById('known-characters-panel');
             const knownChars = gameState.playerKnowledge.knownCharacters || {};
             if (Object.keys(knownChars).length === 0) {
                 display.innerHTML = `<p class="text-gray-500 italic">You have not met any key characters yet.</p>`;
@@ -498,6 +501,19 @@
             `).join('');
         }
         
+        function renderCharacterPanel() {
+            const display = document.getElementById('character-panel');
+            const pc = gameState.characterSheet;
+            let inventoryHTML = pc.inventory.items.map(item => `<li>${item}</li>`).join('');
+            display.innerHTML = `
+                <div class="space-y-4">
+                    <div><h3 class="font-title text-xl text-yellow-400">${pc.name}</h3><p class="text-sm italic">${pc.physicalDescription}</p></div>
+                    <div><p><strong>Health:</strong> <span class="text-green-400">${pc.health}</span></p><p><strong>Status:</strong> ${pc.survivalStatus}</p></div>
+                    <div><h4 class="font-bold border-b border-gray-600 mb-1">Inventory</h4><ul class="text-sm"><li>${pc.inventory.currency} Denarii</li>${inventoryHTML}</ul></div>
+                </div>
+            `;
+        }
+
         function renderGameState() {
             const display = document.getElementById('game-state-display');
             const pc = gameState.characterSheet;
@@ -510,18 +526,20 @@
                 `<li>${name}: ${fluency}%</li>`
             ).join('');
 
-            let inventoryHTML = pc.inventory.items.map(item => `<li>${item}</li>`).join('');
-
             display.innerHTML = `
                 <div class="space-y-4">
-                    <div><h3 class="font-title text-xl text-yellow-400">${pc.name}</h3><p class="text-sm italic">${pc.physicalDescription}</p></div>
-                    <div><p><strong>Health:</strong> <span class="text-green-400">${pc.health}</span></p><p><strong>Status:</strong> ${pc.survivalStatus}</p></div>
                     <div><h4 class="font-bold border-b border-gray-600 mb-1">Attributes</h4><ul class="text-sm"><li>STR: ${pc.attributes.STR}</li><li>DEX: ${pc.attributes.DEX}</li><li>WITS: ${pc.attributes.WITS}</li><li>CHA: ${pc.attributes.CHA}</li></ul></div>
                     <div><h4 class="font-bold border-b border-gray-600 mb-1">Skills</h4><ul class="text-sm">${skillsHTML}</ul></div>
                     <div><h4 class="font-bold border-b border-gray-600 mb-1">Languages</h4><ul class="text-sm">${languagesHTML}</ul></div>
-                    <div><h4 class="font-bold border-b border-gray-600 mb-1">Inventory</h4><ul class="text-sm"><li>${pc.inventory.currency} Denarii</li>${inventoryHTML}</ul></div>
                 </div>
             `;
+        }
+        
+        function updateUI() {
+            renderGameState();
+            renderKeyCharacters();
+            renderFactions();
+            renderCharacterPanel();
         }
         
         function addStoryMessage(html, sender="GM") {
@@ -572,7 +590,7 @@
             document.querySelector('#action-form button').disabled = true;
 
             const fullPrompt = constructFullPrompt(actionText);
-            logToConsole('Sending Prompt to API...', fullPrompt);
+            logToConsole('Sending Prompt to API...', { promptLength: fullPrompt.length });
             const apiResponse = await callGeminiAPI(fullPrompt);
             logToConsole('Received Response from API:', apiResponse);
             
@@ -635,7 +653,7 @@
                 const jsonString = atob(saveCode);
                 const loadedData = JSON.parse(jsonString);
 
-                if (loadedData.characterSheet && loadedData.keyCharacters) {
+                if (loadedData.characterSheet) {
                     gameState = loadedData;
                     document.getElementById('story-content').innerHTML = '';
                     const lastEvent = gameState.worldState.majorEvents[gameState.worldState.majorEvents.length - 1] || "your journey";
@@ -688,7 +706,7 @@
         }
 
         function switchTab(tabName) {
-            ['characters', 'factions', 'console'].forEach(t => {
+            ['character', 'known-characters', 'factions', 'console'].forEach(t => {
                 document.getElementById(`tab-${t}`).classList.remove('active');
                 document.getElementById(`${t}-panel`).classList.add('hidden');
             });
