@@ -9,7 +9,7 @@ You have arrived at a powder keg moment. In the south-east, Prasutagus, the clie
 ## 3. Scenario-Specific Rules
 - **Magic & The Supernatural:** This is a strictly historical setting. Magic is disabled. The beliefs of the Celts and Romans in their gods and omens are very real to them, but there are no fireballs or magical spells.
 - **Languages & Dialects:**
-    - **Default Setting:** This scenario uses the "Easy" language setting. The character starts with 100% fluency in Common Brittonic and Vulgar Latin.
+    - **Default Setting:** This scenario uses the "Easy" language setting. Your character starts with 100% fluency in Common Brittonic and Vulgar Latin.
     - **Common Brittonic:** This is the base language understood by all Celtic tribes in Britannia, though each has its own distinct dialect.
     - **Dialects:** Each tribe speaks a dialect of Brittonic (e.g., Icenian, Brigantian). Learning a local dialect is tracked like a language and can improve relations with that tribe while potentially causing friction with their enemies.
     - **NPC Languages:** Most tribal peasants will only speak their local dialect. Traders, travelers, and leaders are often multilingual, typically speaking multiple dialects and Vulgar Latin.
