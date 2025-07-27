@@ -1,0 +1,79 @@
+# SCENARIO: The Eagle and the Iceni
+
+## 1. Setting Overview & Tone
+The year is 60 AD. You are in the heart of Britannia, a land seething under the boot of the Roman Empire. The air is thick with resentment. The tribes whisper of rebellion, while the Roman colonists and veterans in their new cities grow fat and arrogant. The tone is gritty, dangerous, and historically authentic. Survival depends on your wits, your ability to adapt, and the choices you make when caught between the iron might of Rome and the furious spirit of the Celtic tribes.
+
+## 2. In-Depth Historical Context
+You have arrived at a powder keg moment. In the south-east, Prasutagus, the client king of the Iceni tribe, has just died. In his will, he tried to preserve his kingdom by leaving it jointly to his daughters and the Roman Emperor, Nero. However, the Roman procurator, Catus Decianus, is poised to ignore the will, seeing an opportunity for personal profit. This situation is incredibly tense; one significant act of Roman arrogance could be the spark that ignites a furious rebellion. To the north, the powerful Brigantes are a fractured people; their queen, Cartimandua, is a staunch Roman ally, but her estranged husband, Venutius, harbors deep anti-Roman sentiments, creating a simmering civil war. You have arrived in the territory of the Parisi, a smaller tribe situated just south of the Brigantes. The Roman governor, Gaius Suetonius Paulinus, is currently far away in the west, campaigning against the druids on the island of Mona (Anglesey), leaving the province dangerously exposed.
+
+## 3. Scenario-Specific Rules
+- **Magic & The Supernatural:** This is a strictly historical setting. Magic is disabled. The beliefs of the Celts and Romans in their gods and omens are very real to them, but there are no fireballs or magical spells.
+- **Languages & Dialects:**
+    - **Default Setting:** This scenario uses the "Easy" language setting. The character starts with 100% fluency in Common Brittonic and Vulgar Latin.
+    - **Common Brittonic:** This is the base language understood by all Celtic tribes in Britannia, though each has its own distinct dialect.
+    - **Dialects:** Each tribe speaks a dialect of Brittonic (e.g., Icenian, Brigantian). Learning a local dialect is tracked like a language and can improve relations with that tribe while potentially causing friction with their enemies.
+    - **NPC Languages:** Most tribal peasants will only speak their local dialect. Traders, travelers, and leaders are often multilingual, typically speaking multiple dialects and Vulgar Latin.
+- **Speechcraft:** All CHA-based social checks (Persuasion, Deception, Intimidation) are resolved through player dialogue, not dice rolls. The GM will judge the quality and effectiveness of your argument, plea, or threat based on what you actually say and the NPC's personality and motivations.
+- **Economy & Currency:**
+    - **Roman Coinage:** The primary currency in Roman-controlled areas (Londinium, Camulodunum, etc.) and for large-scale trade is the Roman **Denarius** (a silver coin).
+    - **Barter System:** Among the tribes, a barter system is still prevalent.
+- **Time, Date & Event Triggers:**
+    - **Start Date & Time:** The game begins on `60.03.03` at `16:00`.
+    - **Rebellion Trigger:** The Boudican Rebellion will be triggered on a secret, randomly determined date between `60.09.03` (6 months after start) and `61.09.03` (18 months after start).
+- **Information, Rumors & NPC Knowledge:**
+    - **Principle of Locality:** An NPC's knowledge is most accurate about their immediate surroundings and becomes less reliable with distance.
+    - **NPC Knowledge Tiers:** Locals, Travelers, and Faction Insiders have varying levels of accuracy.
+    - **The Information Check (d100 Roll):** The GM will make a secret d100 roll to determine the quality of an NPC's information, modified by various factors. A failure can result in honest ignorance, misinformation, or deliberate deception.
+- **GM Historical Accuracy Directive:** The GM will endeavor to make all decisions for key historical characters based on a deep understanding of their recorded personalities, motivations, and actions to ensure the highest possible level of historical authenticity.
+
+## 4. Available Skills
+* Athleticism
+* Survival
+* Improvisation
+* Stealth
+* First Aid
+* Observation
+* Melee (Improvised)
+* Unarmed Combat
+* Ranged Combat
+* Tactics
+* Lore
+
+## 5. Initial Key Characters
+*(This section provides the starting data for the application to build the `keyCharacters` object in the initial game state.)*
+- **Boudica:** **Significance:** Regional. A tall, formidable woman in her late 30s, standing around 5'11". She has a strong, athletic build, fair skin prone to flushing when angered, and piercing blue eyes. Her most distinguishing feature is a mane of fiery red hair that falls in thick braids to her hips. She typically wears fine wool tunics in shades of blue and green, adorned with heavy gold torcs and arm rings befitting a Celtic queen.
+- **Gaius Suetonius Paulinus:** **Significance:** Provincial. A man in his 50s, approximately 5'9", with the lean, wiry physique of a career soldier. His skin is tanned and weathered from years on campaign, with a network of fine lines around his sharp, intelligent grey eyes. He has close-cropped grey hair and the stern, clean-shaven face of a Roman aristocrat. A thin scar runs along his jawline. He is never seen out of his military attire: a polished cuirass, red cloak, and the legionary's gladius at his hip.
+- **Catus Decianus:** **Significance:** Provincial. A portly, middle-aged man around 5'7" with a soft, pale face, thin lips that easily twist into a sneer, and small, dark eyes. He is overweight, with a noticeable paunch that strains against his expensive, and often slightly garish, civilian robes. His complexion is pasty from a life spent indoors.
+- **Cartimandua:** **Significance:** Regional. A shrewd-looking woman in her 50s, around 5'6". She is still handsome, with high cheekbones and intelligent, dark brown eyes. She keeps her greying dark hair in a complex Roman style of braids and pins. She adopts some Roman fashions, like a pinned stola over her Celtic dress, and is adorned with rich Brigantian gold and jet jewelry.
+- **Venutius:** **Significance:** Regional. A rugged, scarred warrior in his 50s, standing an imposing 6'2". He has a powerful, muscular build, with long limbs and broad shoulders. His face is a roadmap of old battles, with a broken nose and a prominent scar across his left eyebrow. He has long, wild, dark hair, a thick beard, and intense, brooding brown eyes. He wears traditional Celtic garb—wool trousers and a tunic—and is never without his longsword.
+- **Dumnorix:** **Significance:** Local. A pragmatic man in his 40s, with a stocky, powerful build, around 5'8". He has the weathered, sun-beaten face of someone who spends much of their time outdoors, with friendly crinkles around his green eyes. His brown hair and thick beard are neatly trimmed. He wears practical leather and wool clothing, suitable for the northern climate.
+- **Tiberius Claudius Celer:** **Significance:** Regional. A man in his 40s of average height (5'8") and build. He is a former slave from Gaul and has a sharp, calculating gaze in his hazel eyes. He keeps his dark hair short in the Roman style and is always clean-shaven. He dresses in fine, but practical, dark-colored robes, choosing function over ostentation. His hands are surprisingly calloused for a merchant.
+- **The Arch-Druid of Mona (Archetype):** **Significance:** Provincial. An elder whose age is impossible to guess. Gaunt and wiry, with eyes that seem to see through you. Speaks in riddles and pronouncements, wielding immense political and spiritual authority over the Celtic tribes.
+
+## 6. Faction Strengths & Data
+*(This data populates the initial game state.)*
+- **Roman Province (Legions & Administration):** Territory: ~25,000 sq. miles; Military: Very High; Economy: Strong; Political Stability: Low; Technology Level: Roman Provincial.
+- **Roman Auxilia:** Territory: None; Military: High; Economy: None; Political Stability: Medium; Technology Level: Roman Military.
+- **Merchants of Londinium:** Territory: None; Military: None; Economy: Very High; Political Stability: High; Technology Level: Roman Provincial.
+- **The Iceni:** Territory: ~1,500 sq. miles; Military: Medium; Economy: Good; Political Stability: Very Low; Technology Level: Iron Age.
+- **The Brigantes:** Territory: ~12,000 sq. miles; Military: High; Economy: Medium; Political Stability: Critical; Technology Level: Iron Age.
+- **The Parisi:** Territory: ~750 sq. miles; Military: Low; Economy: Medium; Political Stability: High; Technology Level: Iron Age.
+- **The Regni:** Territory: ~1,000 sq. miles; Military: Very Low; Economy: Very High; Political Stability: Very High; Technology Level: Roman Provincial.
+- **The Druid Order:** Territory: None; Military: None; Economy: None; Political Stability: High (but under attack); Technology Level: Lore.
+
+## 7. Geography & Travel
+- **Capitals & Major Settlements:** Romans: Camulodunum (Colchester) & Londinium (London); Iceni: Venta Icenorum (Caistor St Edmund); Brigantes: Stanwick Iron Age Fort; Parisi: Near modern-day Brough; Regni: Noviomagus Reginorum (Chichester).
+- **Estimated Distances:** Parisi to Stanwick: ~70 miles; Parisi to Venta Icenorum: ~140 miles; Venta Icenorum to Camulodunum: ~40 miles; Camulodunum to Londinium: ~55 miles.
+- **Travel Speeds:** On Foot: Base 15 miles/day + Athleticism bonus; Horseback: ~30 miles/day; Horse-drawn Cart: ~20 miles/day; Ox-drawn Cart: ~10 miles/day.
+
+## 8. Starting Situation
+You feel a gut-wrenching lurch... You are standing on a low, rolling hill under a vast, grey sky. The air is damp and smells of salt and wet grass. This is the land of the Parisi... A cold wind whips across the hill. You are completely alone. It is late afternoon, around 16:00, and the sky is already beginning to darken. You need to find shelter, and soon. What do you do?
+
+## 9. Game State Template
+*(This is the structure the app will use to create a new game.)*
+- **Character Sheet:** Name, Physical Description, Health, Survival Status, Attributes, Skills, Languages, Inventory, Location.
+- **Player Knowledge:** An object to store what the player knows. `knownCharacters: {}`, `knownFactions: {}`.
+- **Factions:** Roman Province, Roman Auxilia, Merchants of Londinium, Iceni, Brigantes (Cartimandua), Brigantes (Venutius), Parisi, Regni, The Druid Order.
+- **Inter-Faction Relations:** Wary (Romans-Iceni), Allied (Romans-Cartimandua, Romans-Regni, Romans-Merchants), Hostile (Romans-Venutius, Romans-Druids), Hated (Cartimandua-Venutius), Loyal (Auxilia-Romans), Distrustful (Auxilia-Celts), Transactional (Merchants-Celts), Revered (Tribes-Druids).
+- **Active Storylines:** Paulinus attacking Mona; Decianus auditing Iceni; Celer concerned about trade; Boudica consolidating power; Cartimandua suppressing dissent; Venutius gathering allies; Dumnorix securing resources; Druids scattering.
+- **World State:** Starts at `60.03.03 | 16:00`.

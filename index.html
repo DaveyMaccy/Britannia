@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Britannia 60 AD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .font-title {
+            font-family: 'IM Fell English', serif;
+        }
+        /* Custom scrollbar for a better aesthetic */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #2d3748; /* gray-800 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #718096; /* gray-600 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #a0aec0; /* gray-500 */
+        }
+        .story-content p {
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <div id="app-container" class="flex flex-col md:flex-row h-screen hidden">
+
+        <!-- Left Sidebar: Game State & Character -->
+        <aside class="w-full md:w-1/4 bg-gray-800 p-4 flex flex-col h-screen">
+            <div class="flex-grow overflow-y-auto">
+                <h2 class="font-title text-2xl text-yellow-300 border-b-2 border-yellow-500 pb-2 mb-4">Game State</h2>
+                <div id="game-state-display">
+                    <!-- Game state will be rendered here by JavaScript -->
+                </div>
+            </div>
+            <div class="mt-auto pt-4 border-t border-gray-700">
+                <h3 class="font-title text-xl text-yellow-300 mb-2">Backup & Transfer</h3>
+                <div class="space-y-2">
+                    <textarea id="save-load-data" class="w-full bg-gray-900 text-xs rounded p-2 h-24 resize-none" placeholder="Save or load your game code here..."></textarea>
+                    <div class="flex gap-2">
+                        <button id="save-btn" class="w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Save</button>
+                        <button id="load-btn" class="w-1/2 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Load</button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content: Story & Input -->
+        <main class="w-full md:w-1/2 flex flex-col h-screen bg-gray-900">
+            <div id="story-container" class="flex-grow p-6 overflow-y-auto">
+                <h1 class="font-title text-4xl text-center text-yellow-400 mb-6">Britannia 60 AD</h1>
+                <div id="story-content" class="text-lg leading-relaxed">
+                    <!-- Story content will be rendered here -->
+                </div>
+            </div>
+            <div class="p-4 bg-gray-800 border-t border-gray-700">
+                <form id="action-form" class="flex items-center gap-4">
+                    <input type="text" id="action-input" class="w-full bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400" placeholder="What do you do?">
+                    <button type="submit" class="bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-2 px-4 rounded-lg transition-colors">Send</button>
+                </form>
+            </div>
+        </main>
+
+        <!-- Right Sidebar: Key Characters -->
+        <aside class="w-full md:w-1/4 bg-gray-800 p-4 overflow-y-auto h-screen">
+            <h2 class="font-title text-2xl text-yellow-300 border-b-2 border-yellow-500 pb-2 mb-4">Key Characters</h2>
+            <div id="key-characters-display">
+                <!-- Key characters will be rendered here -->
+            </div>
+        </aside>
+
+    </div>
+    
+    <!-- Start Screen Modal -->
+    <div id="start-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+        <div class="bg-gray-800 p-8 rounded-lg max-w-md w-full text-white text-center">
+            <h1 class="font-title text-5xl text-yellow-400 mb-4">Britannia 60 AD</h1>
+            <p class="mb-6">To play, please enter your Gemini API Key. It will be saved locally in your browser and will not be shared.</p>
+            <div class="mb-4">
+                 <input type="password" id="api-key-input" class="w-full bg-gray-700 rounded px-3 py-2 text-center" placeholder="Enter your Gemini API Key">
+            </div>
+            <button id="continue-game-btn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors mb-4 disabled:bg-gray-600 disabled:cursor-not-allowed">Continue Game</button>
+            <button id="new-game-btn" class="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-4 rounded-lg transition-colors">New Game</button>
+        </div>
+    </div>
+
+    <!-- Character Creation Modal -->
+    <div id="setup-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-gray-800 p-8 rounded-lg max-w-lg w-full text-white">
+            <h2 class="font-title text-3xl mb-4 text-yellow-400">Character Creation</h2>
+            <p class="mb-4">Before your story begins, we must know who you are.</p>
+            <div class="mb-4">
+                <label for="char-name" class="block mb-2">What is your name?</label>
+                <input type="text" id="char-name" class="w-full bg-gray-700 rounded px-3 py-2" value="Dec">
+            </div>
+            <div class="mb-4">
+                <label for="char-desc" class="block mb-2">Describe yourself (Height, build, hair/eye color):</label>
+                <textarea id="char-desc" class="w-full bg-gray-700 rounded px-3 py-2" rows="3">6'1", lean but athletic build, short brown hair, green eyes.</textarea>
+            </div>
+            <div class="mb-4">
+                <label class="block mb-2">Choose your strongest attribute (+25 bonus):</label>
+                <select id="attr-bonus" class="w-full bg-gray-700 rounded px-3 py-2">
+                    <option value="STR">Strength (STR)</option>
+                    <option value="DEX">Dexterity (DEX)</option>
+                    <option value="WITS" selected>Wits (WITS)</option>
+                    <option value="CHA">Charisma (CHA)</option>
+                </select>
+            </div>
+            <div class="mb-6">
+                <label class="block mb-2">Choose your three core skills:</label>
+                <div id="core-skills-selection" class="grid grid-cols-2 gap-2"></div>
+            </div>
+            <button id="create-char-btn" class="w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-2 px-4 rounded-lg transition-colors">Begin Your Journey</button>
+        </div>
+    </div>
+
+
+    <script>
+        // --- CORE GAME DATA & STATE MANAGEMENT ---
+        
+        let gameState = {};
+        let turnCounter = 0;
+        let apiKey = ''; // This will be loaded from localStorage
+        let coreRulesText = '';
+        let scenarioText = '';
+        let scenarioData = {}; // Parsed from scenarioText
+
+        // --- INITIALIZATION ---
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await loadGameData();
+                initializeStartScreen();
+            } catch (error) {
+                document.body.innerHTML = `<div class="text-red-400 p-8"><strong>Error loading game files:</strong> ${error.message}.<br><br>Please ensure <strong>CoreRules.txt</strong> and <strong>Scenario.txt</strong> are in the same folder as this index.html file.</div>`;
+                console.error(error);
+            }
+            
+            document.getElementById('action-form').addEventListener('submit', handlePlayerAction);
+            document.getElementById('save-btn').addEventListener('click', handleSave);
+            document.getElementById('load-btn').addEventListener('click', handleLoad);
+        });
+
+        async function loadGameData() {
+            const rulesResponse = await fetch('./CoreRules.txt');
+            if (!rulesResponse.ok) throw new Error('Could not load CoreRules.txt');
+            coreRulesText = await rulesResponse.text();
+
+            const scenarioResponse = await fetch('./Scenario.txt');
+            if (!scenarioResponse.ok) throw new Error('Could not load Scenario.txt');
+            scenarioText = await scenarioResponse.text();
+
+            scenarioData = parseScenario(scenarioText);
+        }
+
+        function initializeStartScreen() {
+            const continueBtn = document.getElementById('continue-game-btn');
+            const newGameBtn = document.getElementById('new-game-btn');
+            const apiKeyInput = document.getElementById('api-key-input');
+
+            // Pre-fill API key if it exists in local storage
+            const savedApiKey = localStorage.getItem('rpgApiKey');
+            if (savedApiKey) {
+                apiKeyInput.value = savedApiKey;
+            }
+            
+            if (localStorage.getItem('rpgGameState')) {
+                continueBtn.disabled = false;
+                continueBtn.addEventListener('click', () => {
+                    if (setApiKey()) {
+                        loadGameFromLocalStorage();
+                    }
+                });
+            } else {
+                continueBtn.disabled = true;
+            }
+            
+            newGameBtn.addEventListener('click', () => {
+                if (setApiKey()) {
+                    showSetupModal();
+                }
+            });
+        }
+
+        function setApiKey() {
+            const apiKeyInput = document.getElementById('api-key-input');
+            const key = apiKeyInput.value.trim();
+            if (!key) {
+                alert('Please enter a valid Gemini API Key to continue.');
+                return false;
+            }
+            apiKey = key;
+            localStorage.setItem('rpgApiKey', key);
+            return true;
+        }
+
+        function showSetupModal() {
+            document.getElementById('start-modal').classList.add('hidden');
+            const modal = document.getElementById('setup-modal');
+            const skillsContainer = document.getElementById('core-skills-selection');
+            skillsContainer.innerHTML = ''; 
+            
+            scenarioData.availableSkills.forEach(skill => {
+                skillsContainer.innerHTML += `
+                    <div>
+                        <input type="checkbox" id="skill-${skill.toLowerCase()}" value="${skill}" class="skill-checkbox">
+                        <label for="skill-${skill.toLowerCase()}">${skill}</label>
+                    </div>
+                `;
+            });
+
+            const checkboxes = document.querySelectorAll('.skill-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    const checkedCount = document.querySelectorAll('.skill-checkbox:checked').length;
+                    if (checkedCount > 3) checkbox.checked = false;
+                });
+            });
+
+            modal.classList.remove('hidden');
+            document.getElementById('create-char-btn').addEventListener('click', createCharacter);
+        }
+
+        function createCharacter() {
+            gameState = JSON.parse(JSON.stringify(scenarioData.gameStateTemplate));
+
+            const name = document.getElementById('char-name').value;
+            const desc = document.getElementById('char-desc').value;
+            const bonusAttr = document.getElementById('attr-bonus').value;
+            const selectedSkills = Array.from(document.querySelectorAll('.skill-checkbox:checked')).map(cb => cb.value);
+
+            if (!name || !desc || selectedSkills.length !== 3) {
+                alert('Please fill out all fields and select exactly 3 core skills.');
+                return;
+            }
+
+            gameState.characterSheet.name = name;
+            gameState.characterSheet.physicalDescription = desc;
+
+            ['STR', 'DEX', 'WITS', 'CHA'].forEach(attr => {
+                let roll = rollDice(5, 20);
+                if (attr === bonusAttr) roll += 25;
+                gameState.characterSheet.attributes[attr] = Math.min(100, roll);
+            });
+
+            scenarioData.availableSkills.forEach(skill => {
+                let roll = selectedSkills.includes(skill) ? rollDice(3, 20) + 25 : rollDice(3, 20);
+                gameState.characterSheet.skills[skill] = { value: roll, type: selectedSkills.includes(skill) ? 'core' : 'other' };
+            });
+
+            startGame(scenarioData.startingSituation);
+        }
+
+        function startGame(startingMessage) {
+            document.getElementById('start-modal').classList.add('hidden');
+            document.getElementById('setup-modal').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('hidden');
+            turnCounter = gameState.turnCounter || 1;
+            updateUI();
+            addStoryMessage(startingMessage, "GM");
+        }
+
+        // --- UI & RENDER FUNCTIONS ---
+
+        function updateUI() {
+            renderGameState();
+            renderKeyCharacters();
+        }
+        
+        function renderGameState() {
+            const display = document.getElementById('game-state-display');
+            const pc = gameState.characterSheet;
+            
+            let skillsHTML = Object.entries(pc.skills).map(([name, data]) => 
+                `<li class="${data.type === 'core' ? 'text-yellow-400' : ''}">${name}: ${data.value}</li>`
+            ).join('');
+
+            let languagesHTML = Object.entries(pc.languages).map(([name, fluency]) =>
+                `<li>${name}: ${fluency}%</li>`
+            ).join('');
+
+            let inventoryHTML = pc.inventory.items.map(item => `<li>${item}</li>`).join('');
+
+            display.innerHTML = `
+                <div class="space-y-4">
+                    <div><h3 class="font-title text-xl text-yellow-400">${pc.name}</h3><p class="text-sm italic">${pc.physicalDescription}</p></div>
+                    <div><p><strong>Health:</strong> <span class="text-green-400">${pc.health}</span></p><p><strong>Status:</strong> ${pc.survivalStatus}</p></div>
+                    <div><h4 class="font-bold border-b border-gray-600 mb-1">Attributes</h4><ul class="text-sm"><li>STR: ${pc.attributes.STR}</li><li>DEX: ${pc.attributes.DEX}</li><li>WITS: ${pc.attributes.WITS}</li><li>CHA: ${pc.attributes.CHA}</li></ul></div>
+                    <div><h4 class="font-bold border-b border-gray-600 mb-1">Skills</h4><ul class="text-sm">${skillsHTML}</ul></div>
+                    <div><h4 class="font-bold border-b border-gray-600 mb-1">Languages</h4><ul class="text-sm">${languagesHTML}</ul></div>
+                    <div><h4 class="font-bold border-b border-gray-600 mb-1">Inventory</h4><ul class="text-sm"><li>${pc.inventory.currency} Denarii</li>${inventoryHTML}</ul></div>
+                </div>
+            `;
+        }
+
+        function renderKeyCharacters() {
+            const display = document.getElementById('key-characters-display');
+            display.innerHTML = Object.values(gameState.keyCharacters).map(char => `
+                <div class="mb-4 p-3 bg-gray-700 rounded-lg">
+                    <h3 class="font-title text-lg text-yellow-400">${char.name}</h3>
+                    <p class="text-sm italic"><strong>Significance:</strong> ${char.significance}</p>
+                    <p class="text-sm"><strong>Status:</strong> ${char.status}</p>
+                    <p class="text-sm"><strong>Description:</strong> ${char.physicalDescription}</p>
+                </div>
+            `).join('');
+        }
+
+        function addStoryMessage(html, sender = "GM") {
+            const content = document.getElementById('story-content');
+            const messageDiv = document.createElement('div');
+            
+            if (sender === "Player") {
+                messageDiv.className = 'text-right mb-4';
+                messageDiv.innerHTML = `<div class="bg-yellow-700 inline-block p-3 rounded-lg text-left"><em>${html}</em></div>`;
+            } else {
+                const header = document.createElement('p');
+                header.className = 'text-sm text-yellow-300 font-title';
+                header.textContent = `[Turn ${turnCounter} | ${gameState.worldState.currentDate} | ${gameState.worldState.currentTime}]`;
+                content.appendChild(header);
+                
+                messageDiv.className = 'mb-4';
+                messageDiv.innerHTML = html;
+            }
+            
+            content.appendChild(messageDiv);
+            document.getElementById('story-container').scrollTop = document.getElementById('story-container').scrollHeight;
+        }
+
+        // --- GAME LOGIC ---
+
+        async function handlePlayerAction(event) {
+            event.preventDefault();
+            const input = document.getElementById('action-input');
+            const actionText = input.value.trim();
+            if (!actionText) return;
+
+            addStoryMessage(actionText, "Player");
+            input.value = '';
+            input.disabled = true;
+            document.querySelector('#action-form button').disabled = true;
+
+            const fullPrompt = constructFullPrompt(actionText);
+            // const apiResponse = await simulateGeminiResponse(fullPrompt); 
+            const apiResponse = await callGeminiAPI(fullPrompt);
+            
+            processApiResponse(apiResponse);
+
+            turnCounter++;
+            gameState.turnCounter = turnCounter;
+            
+            saveGameToLocalStorage();
+            updateUI();
+            
+            input.disabled = false;
+            document.querySelector('#action-form button').disabled = false;
+            input.focus();
+        }
+
+        function processApiResponse(response) {
+            // Deep merge changes into the game state
+            if (response.stateChanges) {
+                gameState = mergeDeep(gameState, response.stateChanges);
+            }
+            addStoryMessage(response.narrative, "GM");
+        }
+
+        function rollDice(count, sides) {
+            let total = 0;
+            for (let i = 0; i < count; i++) total += Math.floor(Math.random() * sides) + 1;
+            return total;
+        }
+
+        // --- SAVE / LOAD LOGIC ---
+
+        function saveGameToLocalStorage() {
+            localStorage.setItem('rpgGameState', JSON.stringify(gameState));
+        }
+
+        function loadGameFromLocalStorage() {
+            const savedGame = localStorage.getItem('rpgGameState');
+            if (savedGame) {
+                gameState = JSON.parse(savedGame);
+                const lastEvent = gameState.worldState.majorEvents[gameState.worldState.majorEvents.length - 1] || "your journey";
+                startGame(`Game loaded. You continue ${lastEvent}.`);
+            }
+        }
+
+        function handleSave() {
+            const jsonString = JSON.stringify(gameState);
+            const base64String = btoa(jsonString);
+            const textArea = document.getElementById('save-load-data');
+            textArea.value = base64String;
+            textArea.select();
+            document.execCommand('copy');
+            alert('Backup code copied to clipboard!');
+        }
+        
+        function handleLoad() {
+            const textArea = document.getElementById('save-load-data');
+            loadGameFromCode(textArea.value);
+        }
+
+        function loadGameFromCode(saveCode) {
+            if (!saveCode.trim()) {
+                alert('Please paste a save code into the text area first.');
+                return;
+            }
+            try {
+                const jsonString = atob(saveCode);
+                const loadedData = JSON.parse(jsonString);
+
+                if (loadedData.characterSheet && loadedData.keyCharacters) {
+                    gameState = loadedData;
+                    document.getElementById('story-content').innerHTML = '';
+                    const lastEvent = gameState.worldState.majorEvents[gameState.worldState.majorEvents.length - 1] || "your journey";
+                    startGame(`Game loaded from code. You continue ${lastEvent}.`);
+                } else {
+                    throw new Error('Invalid save file structure.');
+                }
+            } catch (error) {
+                console.error("Failed to load game:", error);
+                alert('Failed to load game. The save code appears to be invalid or corrupted.');
+            }
+        }
+
+        // --- API & DATA PARSING ---
+
+        function constructFullPrompt(playerAction) {
+            const gameStateString = JSON.stringify(gameState, null, 2);
+            return `
+                --- CORE RULES ---
+                ${coreRulesText}
+
+                --- SCENARIO CONTEXT ---
+                ${scenarioText}
+
+                --- CURRENT GAME STATE (JSON) ---
+                ${gameStateString}
+
+                --- PLAYER ACTION ---
+                ${playerAction}
+            `;
+        }
+
+        function parseScenario(text) {
+            const skillsMatch = text.match(/## 4\. Available Skills\n([\s\S]*?)\n##/);
+            const skills = skillsMatch ? skillsMatch[1].split('\n').map(s => s.replace(/[\*\-]\s/g, '').trim()).filter(Boolean) : [];
+
+            const situationMatch = text.match(/## 10\. Starting Situation\n([\s\S]*?)\n##/);
+            const startingSituation = situationMatch ? situationMatch[1].trim().replace(/\n\s*\n/g, '</p><p>') : "Error: Could not parse starting situation.";
+            
+            const gameStateTemplate = JSON.parse(JSON.stringify(initialScenarioData.gameStateTemplate));
+            
+            return { 
+                availableSkills: skills, 
+                startingSituation: `<p>${startingSituation}</p>`, 
+                gameStateTemplate 
+            };
+        }
+
+        async function simulateGeminiResponse(prompt) {
+            console.log("--- PROMPT SENT TO SIMULATED API ---");
+            let [hours, minutes] = gameState.worldState.currentTime.split(':').map(Number);
+            minutes += rollDice(2, 20);
+            if (minutes >= 60) {
+                hours += Math.floor(minutes / 60);
+                minutes %= 60;
+            }
+            if (hours >= 24) {
+                hours %= 24;
+                gameState.worldState.currentDate = "60.03.04"; 
+            }
+            const newTime = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+
+            return {
+                narrative: `<p>This is a simulated response. The time is now ${newTime}.</p>`,
+                stateChanges: {
+                    worldState: {
+                        currentTime: newTime,
+                        currentDate: gameState.worldState.currentDate
+                    },
+                    characterSheet: {
+                        survivalStatus: "Feeling peckish"
+                    }
+                }
+            };
+        }
+        
+        async function callGeminiAPI(prompt) {
+            if (!apiKey) {
+                alert("API Key is not set. Please refresh and enter your key.");
+                return { narrative: `<p class="text-red-400">Error: API Key is missing.</p>`, stateChanges: {} };
+            }
+            const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
+
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { responseMimeType: "application/json" }
+            };
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API call failed with status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const responseText = data.candidates[0].content.parts[0].text;
+                return JSON.parse(responseText);
+
+            } catch (error) {
+                console.error("Error calling Gemini API:", error);
+                return {
+                    narrative: `<p class="text-red-400">Error connecting to the AI. Please check the console for details.</p>`,
+                    stateChanges: {}
+                };
+            }
+        }
+        
+        // --- UTILITY FUNCTIONS ---
+        function mergeDeep(target, source) {
+            const output = { ...target };
+            if (isObject(target) && isObject(source)) {
+                Object.keys(source).forEach(key => {
+                    if (isObject(source[key])) {
+                        if (!(key in target))
+                            Object.assign(output, { [key]: source[key] });
+                        else
+                            output[key] = mergeDeep(target[key], source[key]);
+                    } else {
+                        Object.assign(output, { [key]: source[key] });
+                    }
+                });
+            }
+            return output;
+        }
+
+        function isObject(item) {
+            return (item && typeof item === 'object' && !Array.isArray(item));
+        }
+
+        
+        const initialScenarioData = {
+             gameStateTemplate: {
+                turnCounter: 1,
+                characterSheet: {
+                    name: "", physicalDescription: "", health: "Healthy", survivalStatus: "Sated, Hydrated, Warm",
+                    attributes: { STR: 0, DEX: 0, WITS: 0, CHA: 0 },
+                    skills: {},
+                    languages: { "Common Brittonic": 100, "Vulgar Latin": 100 },
+                    inventory: { currency: 0, items: ["Blue jeans", "T-shirt", "Brown waxed canvas jacket", "Leather boots", "Wallet (useless)", "Pen knife", "Smartphone (18% battery)"] },
+                    location: "Parisi Territory"
+                },
+                playerKnowledge: {
+                    knownCharacters: {},
+                    knownFactions: {}
+                },
+                worldState: { currentDate: "60.03.03", currentTime: "16:00", majorEvents: ["Arrived in the territory of the Parisi."] },
+                keyCharacters: {
+                    "Boudica": { name: "Boudica", significance: "Regional", status: "Alive", physicalDescription: "A tall, formidable woman in her late 30s, with a mane of fiery red hair." },
+                    "Gaius Suetonius Paulinus": { name: "Gaius Suetonius Paulinus", significance: "Provincial", status: "Alive", physicalDescription: "A lean, weathered career soldier in his 50s." }
+                },
+                factions: {
+                    "Roman Province": {}, "Roman Auxilia": {}, "Merchants of Londinium": {}, "Iceni": {},
+                    "Brigantes (Cartimandua)": {}, "Brigantes (Venutius)": {}, "Parisi": {}, "Regni": {}
+                }
+            }
+        };
+
+    </script>
+</body>
+</html>
