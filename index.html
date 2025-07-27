@@ -168,7 +168,7 @@
 
 
     <script>
-        // --- CORE GAME DATA & STATE MANAGEMENT ---
+        // --- CORE GAME DATA & STATE MANAGEMENT (GLOBAL VARIABLES) ---
         
         let gameState = {};
         let turnCounter = 0;
@@ -178,7 +178,7 @@
         let scenarioData = {};
         let creationPage = 1;
 
-        // --- UTILITY & PARSING FUNCTIONS (DEFINED FIRST TO PREVENT ERRORS) ---
+        // --- ALL FUNCTION DEFINITIONS (DEFINED FIRST TO PREVENT ERRORS) ---
 
         function rollDice(count, sides) {
             let total = 0;
@@ -242,8 +242,6 @@
                 gameStateTemplate 
             };
         }
-
-        // --- INITIALIZATION & SETUP FUNCTIONS ---
 
         async function loadGameData() {
             const rulesResponse = await fetch('./CoreRules.txt');
