@@ -91,6 +91,7 @@
       "skills": {},
       "languages": { "Common Brittonic": 100, "Vulgar Latin": 100 },
       "inventory": { "currency": 0, "items": [] },
+      "factionReputation": {},
       "location": "Parisi Territory"
     },
     "playerKnowledge": { "knownCharacters": {}, "knownFactions": {} },
