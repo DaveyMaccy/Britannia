@@ -107,6 +107,30 @@
             scenarioData = await scenarioResponse.json();
         }
 
+        function buildElement(config) {
+            const el = document.createElement(config.tag);
+            if (config.id) el.id = config.id;
+            if (config.className) el.className = config.className;
+            if (config.type) el.type = config.type;
+            if (config.placeholder) el.placeholder = config.placeholder;
+            if (config.name) el.name = config.name;
+            if (config.value) el.value = config.value;
+            if (config.checked) el.checked = true;
+            if (config.innerHTML) el.innerHTML = config.innerHTML;
+            if (config.children) {
+                config.children.forEach(childConfig => {
+                    el.appendChild(buildElement(childConfig));
+                });
+            }
+            return el;
+        }
+        
+        function buildUIFromJSON(uiConfig) {
+            const root = document.getElementById('root');
+            root.innerHTML = ''; // Clear any existing content (like the loading screen)
+            uiConfig.forEach(config => root.appendChild(buildElement(config)));
+        }
+
         function initializeStartScreen() {
             const continueBtn = document.getElementById('continue-game-btn');
             const newGameBtn = document.getElementById('new-game-btn');
