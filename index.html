@@ -99,17 +99,21 @@
         }
         
         async function loadGameData() {
-            const rulesResponse = await fetch('./CoreRules.json');
-            if (!rulesResponse.ok) throw new Error('Could not load CoreRules.json');
-            coreRulesText = await rulesResponse.text();
+            try {
+                const rulesResponse = await fetch('./CoreRules.json');
+                if (!rulesResponse.ok) throw new Error('FILE_LOAD_ERROR: Could not load CoreRules.json');
+                coreRulesText = await rulesResponse.text();
 
-            const scenarioResponse = await fetch('./Scenario.json');
-            if (!scenarioResponse.ok) throw new Error('Could not load Scenario.json');
-            scenarioData = await scenarioResponse.json();
+                const scenarioResponse = await fetch('./Scenario.json');
+                if (!scenarioResponse.ok) throw new Error('FILE_LOAD_ERROR: Could not load Scenario.json');
+                scenarioData = await scenarioResponse.json();
 
-            const uiResponse = await fetch('./UI.json');
-            if (!uiResponse.ok) throw new Error('Could not load UI.json');
-            uiData = await uiResponse.json();
+                const uiResponse = await fetch('./UI.json');
+                if (!uiResponse.ok) throw new Error('FILE_LOAD_ERROR: Could not load UI.json');
+                uiData = await uiResponse.json();
+            } catch (error) {
+                throw error; // Re-throw to be caught by the main error handler
+            }
         }
 
         function buildElement(config) {
