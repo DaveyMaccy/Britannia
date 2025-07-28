@@ -114,14 +114,11 @@
 </head>
 <body class="bg-black text-gray-300">
 
-    <!-- Root container for the entire application -->
     <div id="root">
-        <!-- Loading Screen -->
         <div id="loading-screen" class="fixed inset-0 bg-black flex items-center justify-center z-50">
             <h1 class="font-title text-5xl text-yellow-400 animate-pulse-slow">Loading Game Data...</h1>
         </div>
 
-        <!-- Start Screen Modal -->
         <div id="start-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-40 p-4">
             <div class="modal-content w-full max-w-md p-6 space-y-4">
                 <h1 class="font-title text-4xl text-center text-yellow-400">Britannia 60 AD</h1>
@@ -135,14 +132,11 @@
             </div>
         </div>
 
-        <!-- Character Creation Modal -->
         <div id="setup-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-30 p-4">
             <div class="modal-content w-full max-w-6xl h-full max-h-[90vh] flex flex-col p-6">
                 <h2 class="font-title text-3xl text-yellow-400 text-center mb-4">Character Creation</h2>
                 <div class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-6 overflow-hidden">
-                    <!-- Left Panel: Selections -->
                     <div class="md:col-span-2 creation-page" id="creation-panels">
-                        <!-- Page 1: Appearance -->
                         <div id="creation-page-1">
                             <h3 class="font-title text-xl text-yellow-400 border-b border-gray-600 mb-2">Appearance</h3>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
@@ -158,7 +152,6 @@
                             </div>
                              <div class="mt-4"><label for="char-details" class="text-sm text-gray-400">Distinguishing Features</label><textarea id="char-details" placeholder="Scars, tattoos, etc... (or leave blank)" class="w-full h-24"></textarea></div>
                         </div>
-                        <!-- Page 2: Attributes & Skills -->
                         <div id="creation-page-2" class="hidden">
                              <h3 class="font-title text-xl text-yellow-400 border-b border-gray-600 mb-2" data-info="attributes">Attributes</h3>
                              <p class="text-sm text-gray-400 mb-2">Choose your strongest attribute for a +25 bonus.</p>
@@ -178,7 +171,6 @@
                              <p class="text-sm text-gray-400 mb-2">Choose up to 3 core skills for a +25 bonus.</p>
                              <div id="core-skills-selection" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div>
                         </div>
-                        <!-- Page 3: Gear & Languages -->
                         <div id="creation-page-3" class="hidden">
                             <h3 class="font-title text-xl text-yellow-400 border-b border-gray-600 mb-2">Starting Gear</h3>
                             <label class="flex items-center mb-2"><input type="checkbox" id="terminator-mode" class="mr-2"> Terminator Mode (No Gear)</label>
@@ -189,7 +181,6 @@
                                 <div><label>Vulgar Latin Fluency</label><input type="number" id="lang-latin" value="100" min="0" max="100"></div>
                             </div>
                         </div>
-                        <!-- Page 4: Scenario Start -->
                         <div id="creation-page-4" class="hidden">
                             <h3 class="font-title text-xl text-yellow-400 border-b border-gray-600 mb-2">Starting Situation</h3>
                             <div class="space-y-2">
@@ -199,12 +190,10 @@
                             </div>
                         </div>
                     </div>
-                    <!-- Right Panel: Info Box -->
                     <div class="info-box p-4 rounded-lg h-full">
                         <div id="info-box-content"></div>
                     </div>
                 </div>
-                <!-- Navigation -->
                 <div class="flex justify-between items-center pt-4 mt-4 border-t border-gray-600">
                     <button id="prev-btn" class="btn hidden">Previous</button>
                     <div class="flex-grow"></div>
@@ -214,9 +203,7 @@
             </div>
         </div>
 
-        <!-- Main Application Container -->
         <div id="app-container" class="hidden h-screen w-screen p-4 flex flex-col md:flex-row gap-4">
-            <!-- Left Panel: Story -->
             <div class="flex-grow flex flex-col h-1/2 md:h-full md:w-2/3 panel">
                 <div class="panel-header p-2 text-center text-lg">Story Log</div>
                 <div id="story-container" class="flex-grow p-4 overflow-y-auto">
@@ -227,7 +214,6 @@
                     <button type="submit" class="btn">Send</button>
                 </form>
             </div>
-            <!-- Right Panel: Character Info -->
             <div class="h-1/2 md:h-full md:w-1/3 flex flex-col panel">
                 <div class="flex border-b-4 border-black">
                     <div id="tab-character" class="sidebar-tab active flex-1 text-center">Character</div>
@@ -247,7 +233,6 @@
             </div>
         </div>
         
-        <!-- Settings Modal -->
         <div id="settings-modal" class="hidden fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
             <div class="modal-content w-full max-w-lg p-6 space-y-4">
                 <h2 class="font-title text-2xl text-yellow-400">Settings</h2>
@@ -531,6 +516,8 @@
         newGameState.keyCharacters = scenarioData.initial_key_characters;
         newGameState.factions = scenarioData.faction_data;
         
+        // FIX: Initialize the factionReputation object before populating it.
+        newGameState.characterSheet.factionReputation = {};
         Object.keys(newGameState.factions).forEach(f => {
             newGameState.characterSheet.factionReputation[f] = 0;
         });
