@@ -65,6 +65,24 @@
         }
         @keyframes pulse { 50% { opacity: 0.6; } }
         .animate-pulse-slow { animation: pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        
+        /* Styles for the new file drop zone */
+        .drop-zone {
+            border: 2px dashed #5a4a3a;
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            color: #7a6a5a;
+            transition: background-color 0.2s, border-color 0.2s;
+            cursor: pointer;
+        }
+        .drop-zone.drag-over {
+            background-color: #3a2a1a;
+            border-color: #ff9900;
+        }
+        .drop-zone input[type="file"] {
+            display: none;
+        }
     </style>
 </head>
 <body class="bg-black text-gray-300">
@@ -202,18 +220,21 @@
                 <h2 class="font-title text-2xl text-yellow-400">Settings</h2>
                 <div><label>API Key</label><input type="text" id="settings-api-key" class="w-full"></div>
                 <div><label>Character Description (for AI)</label><textarea id="settings-char-desc" class="w-full h-24"></textarea></div>
-                <div class="flex justify-between gap-4">
-                    <button id="return-to-start-btn" class="btn bg-red-800 hover:bg-red-700">Return to Start</button>
-                    <div>
-                        <button id="settings-cancel-btn" class="btn">Cancel</button>
-                        <button id="settings-apply-btn" class="btn">Apply</button>
-                    </div>
+                <div class="flex justify-end gap-4">
+                    <button id="settings-cancel-btn" class="btn">Cancel</button>
+                    <button id="settings-apply-btn" class="btn">Apply</button>
                 </div>
-                <h3 class="font-title text-xl text-yellow-400 pt-4 border-t border-gray-600">Save/Load</h3>
-                <textarea id="save-load-data" class="w-full h-20" placeholder="Paste backup code here to load..."></textarea>
-                <div class="grid grid-cols-2 gap-4">
-                    <button id="save-btn" class="btn">Copy Backup to Clipboard</button>
-                    <button id="load-btn" class="btn">Load from Backup Code</button>
+                <h3 class="font-title text-xl text-yellow-400 pt-4 border-t border-gray-600">Save/Load Game</h3>
+                <button id="save-file-btn" class="btn w-full">Save Game to File</button>
+                <div class="mt-4">
+                    <label id="drop-zone-label" for="load-file-input" class="drop-zone block">
+                        <span id="drop-zone-text">Drag & Drop Save File Here or Click to Browse</span>
+                        <input type="file" id="load-file-input" accept=".json">
+                    </label>
+                </div>
+                <button id="load-file-btn" class="btn w-full mt-2" disabled>Load Game from File</button>
+                 <div class="pt-4 border-t border-gray-600 mt-4">
+                     <button id="return-to-start-btn" class="btn bg-red-800 hover:bg-red-700 w-full">Return to Start Screen & Clear Game</button>
                 </div>
             </div>
         </div>
@@ -232,6 +253,7 @@
     let coreRulesText = '';
     let scenarioData = {};
     let creationPage = 1;
+    let fileToLoad = null; // Variable to hold the selected file for loading
 
     /**
      * Fetches the core JSON files required for the game to run.
@@ -262,10 +284,8 @@
      */
     function initializeStartScreen() {
         const continueBtn = document.getElementById('continue-game-btn');
-        const newGameBtn = document.getElementById('new-game-btn');
         const apiKeyInput = document.getElementById('api-key-input');
-        const clearDataBtn = document.getElementById('clear-data-btn');
-
+        
         const savedApiKey = localStorage.getItem('rpgApiKey');
         if (savedApiKey) apiKeyInput.value = savedApiKey;
         
@@ -273,25 +293,7 @@
         const hasValidSave = savedGame && JSON.parse(savedGame).turnCounter > 0;
 
         continueBtn.disabled = !hasValidSave;
-
-        continueBtn.addEventListener('click', () => {
-            if (setApiKey()) loadGameFromLocalStorage();
-        });
         
-        newGameBtn.addEventListener('click', () => {
-            if (hasValidSave) {
-                // NOTE: Using a custom modal for confirm would be better, but alert is simpler for now.
-                // This is a known limitation. A custom modal would prevent the user from not seeing it.
-                if (window.confirm('Starting a new game will delete your previous locally stored game files. Are you sure?')) {
-                     if (setApiKey()) showSetupModal();
-                }
-            } else {
-                if (setApiKey()) showSetupModal();
-            }
-        });
-        
-        clearDataBtn.addEventListener('click', clearLocalStorage);
-
         // Show the start modal now that it's ready
         document.getElementById('loading-screen').classList.add('hidden');
         document.getElementById('start-modal').classList.remove('hidden');
@@ -827,70 +829,100 @@ ${playerAction}
     // --- SAVE / LOAD & SETTINGS LOGIC ---
 
     function saveGameToLocalStorage() {
-        localStorage.setItem('rpgGameState', JSON.stringify(gameState));
-        document.getElementById('continue-game-btn').disabled = false;
+        if (gameState && gameState.turnCounter > 0) {
+            localStorage.setItem('rpgGameState', JSON.stringify(gameState));
+            document.getElementById('continue-game-btn').disabled = false;
+        }
     }
 
     function loadGameFromLocalStorage() {
         const savedGame = localStorage.getItem('rpgGameState');
         if (savedGame) {
-            gameState = JSON.parse(savedGame);
-            const lastEvent = gameState.worldState.majorEvents?.[gameState.worldState.majorEvents.length - 1] || "your journey";
-            startGame(`Game loaded. You continue ${lastEvent}.`);
+            const loadedData = JSON.parse(savedGame);
+            loadGameFromStateObject(loadedData);
         }
     }
 
-    function handleSave() {
-        const jsonString = JSON.stringify(gameState);
-        const base64String = btoa(jsonString);
-        const textArea = document.getElementById('save-load-data');
-        textArea.value = base64String;
-        textArea.select();
-        document.execCommand('copy');
-        alert('Backup code copied to clipboard!');
-    }
-    
-    function handleLoad() {
-        const textArea = document.getElementById('save-load-data');
-        loadGameFromCode(textArea.value);
-    }
-
-    function loadGameFromCode(saveCode) {
-        if (!saveCode.trim()) {
-            alert('Please paste a save code into the text area first.');
+    /**
+     * Triggers a file download containing the current game state.
+     */
+    function saveGameToFile() {
+        if (!gameState || !gameState.characterSheet) {
+            alert("No active game to save.");
             return;
         }
-        try {
-            const jsonString = atob(saveCode);
-            const loadedData = JSON.parse(jsonString);
+        const jsonString = JSON.stringify(gameState, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Britannia_Save_T${turnCounter}_${gameState.characterSheet.name.replace(/\s/g, '_')}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        alert('Save file generated!');
+    }
 
-            if (loadedData.characterSheet && loadedData.turnCounter) {
-                gameState = loadedData;
-                document.getElementById('story-content').innerHTML = '';
-                const lastEvent = gameState.worldState.majorEvents?.[gameState.worldState.majorEvents.length - 1] || "your journey";
-                startGame(`Game loaded from code. You continue ${lastEvent}.`);
-                document.getElementById('settings-modal').classList.add('hidden');
-            } else {
-                throw new Error('Invalid save file structure.');
+    /**
+     * Handles the logic for loading a game from a file.
+     */
+    function loadGameFromFile() {
+        if (!fileToLoad) {
+            alert("No file selected to load.");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            try {
+                const jsonString = event.target.result;
+                const loadedData = JSON.parse(jsonString);
+                loadGameFromStateObject(loadedData);
+            } catch (error) {
+                console.error("Failed to load game from file:", error);
+                alert('Failed to load game. The save file appears to be invalid or corrupted.');
             }
-        } catch (error) {
-            console.error("Failed to load game:", error);
-            alert('Failed to load game. The save code appears to be invalid or corrupted.');
+        };
+        reader.onerror = function() {
+            alert('Error reading the selected file.');
+        };
+        reader.readAsText(fileToLoad);
+    }
+    
+    /**
+     * Loads the game from a validated gameState object.
+     * @param {object} loadedData - The parsed gameState object from a save file.
+     */
+    function loadGameFromStateObject(loadedData) {
+        if (loadedData && loadedData.characterSheet && loadedData.turnCounter) {
+            gameState = loadedData;
+            document.getElementById('story-content').innerHTML = '';
+            const lastEvent = gameState.worldState.majorEvents?.[gameState.worldState.majorEvents.length - 1] || "your journey";
+            startGame(`Game loaded. You continue ${lastEvent}.`);
+            // Close the settings modal after a successful load
+            document.getElementById('settings-modal').classList.add('hidden');
+        } else {
+            throw new Error('Invalid save file structure.');
         }
     }
     
     function clearLocalStorage() {
-        localStorage.removeItem('rpgGameState');
-        localStorage.removeItem('rpgApiKey');
-        document.getElementById('api-key-input').value = '';
-        document.getElementById('continue-game-btn').disabled = true;
-        alert('All local data has been cleared.');
+        if (window.confirm('This will clear your locally stored autosave and API key. Are you sure?')) {
+            localStorage.removeItem('rpgGameState');
+            localStorage.removeItem('rpgApiKey');
+            document.getElementById('api-key-input').value = '';
+            document.getElementById('continue-game-btn').disabled = true;
+            alert('All local data has been cleared.');
+        }
     }
 
     function openSettingsModal() {
         const modal = document.getElementById('settings-modal');
         document.getElementById('settings-api-key').value = apiKey;
-        document.getElementById('settings-char-desc').value = gameState.characterSheet.physicalDescription;
+        if (gameState && gameState.characterSheet) {
+            document.getElementById('settings-char-desc').value = gameState.characterSheet.physicalDescription;
+        }
         modal.classList.remove('hidden');
     }
 
@@ -902,7 +934,7 @@ ${playerAction}
             apiKey = newApiKey;
             localStorage.setItem('rpgApiKey', apiKey);
         }
-        if (newDesc) {
+        if (newDesc && gameState && gameState.characterSheet) {
             gameState.characterSheet.physicalDescription = newDesc;
         }
         
@@ -911,6 +943,22 @@ ${playerAction}
         document.getElementById('settings-modal').classList.add('hidden');
     }
 
+    /**
+     * Handles file selection and updates the UI.
+     * @param {File} file - The file selected by the user.
+     */
+    function handleFileSelect(file) {
+        if (file && file.type === "application/json") {
+            fileToLoad = file;
+            document.getElementById('drop-zone-text').textContent = `File selected: ${file.name}`;
+            document.getElementById('load-file-btn').disabled = false;
+        } else {
+            alert("Invalid file type. Please select a .json save file.");
+            fileToLoad = null;
+            document.getElementById('drop-zone-text').textContent = 'Drag & Drop Save File Here or Click to Browse';
+            document.getElementById('load-file-btn').disabled = true;
+        }
+    }
 
     // --- III. SCRIPT EXECUTION START ---
     // This is the entry point of the script. It waits for the HTML document to be fully
@@ -923,6 +971,22 @@ ${playerAction}
             // Now that data is loaded, set up all the event listeners.
             // This must happen *after* the HTML is defined and *before* the user can interact.
             
+            // Start Screen Buttons
+            document.getElementById('continue-game-btn').addEventListener('click', () => {
+                if (setApiKey()) loadGameFromLocalStorage();
+            });
+            document.getElementById('new-game-btn').addEventListener('click', () => {
+                const hasValidSave = localStorage.getItem('rpgGameState') !== null;
+                if (hasValidSave) {
+                    if (window.confirm('Starting a new game will delete your previous locally stored game files. Are you sure?')) {
+                         if (setApiKey()) showSetupModal();
+                    }
+                } else {
+                    if (setApiKey()) showSetupModal();
+                }
+            });
+            document.getElementById('clear-data-btn').addEventListener('click', clearLocalStorage);
+
             // Creation Modal Navigation
             document.getElementById('next-btn').addEventListener('click', () => navigateCreation(1));
             document.getElementById('prev-btn').addEventListener('click', () => navigateCreation(-1));
@@ -942,15 +1006,39 @@ ${playerAction}
             document.getElementById('settings-apply-btn').addEventListener('click', applySettings);
             document.getElementById('settings-cancel-btn').addEventListener('click', () => document.getElementById('settings-modal').classList.add('hidden'));
             document.getElementById('return-to-start-btn').addEventListener('click', () => window.location.reload());
-            document.getElementById('save-btn').addEventListener('click', handleSave);
-            document.getElementById('load-btn').addEventListener('click', handleLoad);
+            
+            // New Save/Load Button Listeners
+            document.getElementById('save-file-btn').addEventListener('click', saveGameToFile);
+            document.getElementById('load-file-btn').addEventListener('click', loadGameFromFile);
+
+            // Drag and Drop Listeners
+            const dropZone = document.getElementById('drop-zone-label');
+            dropZone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                dropZone.classList.add('drag-over');
+            });
+            dropZone.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+            });
+            dropZone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('drag-over');
+                if (e.dataTransfer.files.length) {
+                    handleFileSelect(e.dataTransfer.files[0]);
+                }
+            });
+            document.getElementById('load-file-input').addEventListener('change', (e) => {
+                if (e.target.files.length) {
+                    handleFileSelect(e.target.files[0]);
+                }
+            });
 
             // Finally, initialize the start screen, which shows the first modal.
             initializeStartScreen();
 
         } catch (error) {
             // If loadGameData fails, it will have already displayed an error message.
-            // We just log it again here for good measure.
             console.error("Application failed to initialize.", error);
         }
     });
