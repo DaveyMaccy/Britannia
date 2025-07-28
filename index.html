@@ -123,11 +123,11 @@
                                 <select id="char-gender"><option>Male</option><option>Female</option></select>
                                 <input type="text" id="char-height" placeholder="Height (e.g., 5'10&quot;)">
                                 <input type="text" id="char-weight" placeholder="Weight (e.g., 170 lbs)">
-                                <input type="text" id="char-build" placeholder="Build (e.g., Athletic)">
-                                <input type="text" id="char-skin" placeholder="Skin Tone">
-                                <input type="text" id="char-hair-style" placeholder="Hair Style">
-                                <input type="text" id="char-hair-color" placeholder="Hair Color">
-                                <input type="text" id="char-eye-color" placeholder="Eye Color">
+                                <select id="char-build"><option>Body 1</option><option>Body 2</option><option>Body 3</option></select>
+                                <select id="char-skin"><option>Light</option><option>Tan</option><option>Dark</option></select>
+                                <select id="char-hair-style"><option>None</option><option>Short</option><option>Medium</option><option>Long</option></select>
+                                <select id="char-hair-color"><option>Blonde</option><option>Red</option><option>Brown</option><option>Grey</option><option>Black</option></select>
+                                <select id="char-eye-color"><option>Blue</option><option>Green</option><option>Hazel</option><option>Brown</option></select>
                             </div>
                             <textarea id="char-details" placeholder="Distinguishing features..." class="w-full mt-4 h-24"></textarea>
                         </div>
@@ -135,6 +135,12 @@
                         <div id="creation-page-2" class="hidden">
                              <h3 class="font-title text-xl text-yellow-400 border-b border-gray-600 mb-2" data-info="attributes">Attributes</h3>
                              <p class="text-sm text-gray-400 mb-2">Choose your strongest attribute for a +25 bonus.</p>
+                             <div class="info-box p-3 rounded mb-4 text-xs space-y-1">
+                                 <p><strong>Strength (STR):</strong> Raw physical power, affecting melee damage and carrying capacity.</p>
+                                 <p><strong>Dexterity (DEX):</strong> Agility, reflexes, and precision, affecting ranged combat and stealth.</p>
+                                 <p><strong>Wits (WITS):</strong> Intelligence, perception, and problem-solving, affecting skills like First Aid and Tactics.</p>
+                                 <p><strong>Charisma (CHA):</strong> Force of personality, persuasiveness, and leadership.</p>
+                             </div>
                              <select id="attr-bonus" class="w-full mb-4">
                                 <option value="STR">Strength (STR)</option>
                                 <option value="DEX">Dexterity (DEX)</option>
@@ -533,6 +539,7 @@
         turnCounter = gameState.turnCounter || 1;
         updateAllUI();
         addStoryMessage(startingMessage, "GM");
+        saveGameToLocalStorage(); // Autosave on game start
     }
 
     // --- UI & RENDER FUNCTIONS ---
