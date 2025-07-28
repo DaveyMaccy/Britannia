@@ -80,5 +80,23 @@
     "wilderness": "You are standing on a low, rolling hill under a vast, grey sky. The air is damp and smells of salt and wet grass. This is the land of the Parisi... A cold wind whips across the hill. You are completely alone. It is late afternoon, and the sky is already beginning to darken.",
     "roman_city": "You awaken with a start, not in your bed, but slumped in a grimy alleyway. The sounds of a bustling city, shouts in Latin and a strange Celtic tongue, fill the air. You are in [CITY]. People in tunics and togas hurry past the alley entrance, ignoring you completely.",
     "tribal_holding": "You find yourself on the edge of a large tribal settlement, a chaotic collection of roundhouses surrounded by a wooden palisade. The smell of woodsmoke and livestock is overpowering. Warriors with long hair and painted faces give you suspicious glances as you stand awkwardly near the gate of [HOLDING]."
+  },
+  "gameStateTemplate": {
+    "characterSheet": {
+      "name": "",
+      "physicalDescription": "",
+      "health": "Healthy",
+      "survivalStatus": "Sated, Hydrated, Warm",
+      "attributes": {},
+      "skills": {},
+      "languages": { "Common Brittonic": 100, "Vulgar Latin": 100 },
+      "inventory": { "currency": 0, "items": [] },
+      "location": "Parisi Territory"
+    },
+    "playerKnowledge": { "knownCharacters": {}, "knownFactions": {} },
+    "factions": {},
+    "interFactionRelations": {},
+    "activeStorylines": {},
+    "worldState": { "currentDate": "60.03.03", "currentTime": "16:00" }
   }
 }
