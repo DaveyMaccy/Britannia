@@ -128,10 +128,12 @@
                 <p class="text-center text-gray-400">Enter your Gemini API Key to begin.</p>
                 <input type="text" id="api-key-input" placeholder="Enter your API Key" class="w-full text-center">
                 <div class="grid grid-cols-2 gap-4">
-                    <button id="continue-game-btn" class="btn w-full" disabled>Continue</button>
+                    <button id="continue-game-btn" class="btn w-full" disabled>Continue Game</button>
                     <button id="new-game-btn" class="btn w-full">New Game</button>
                 </div>
-                <button id="clear-data-btn" class="text-xs text-gray-500 hover:text-red-400 text-center w-full">Clear All Local Data</button>
+                <button id="load-from-file-start-btn" class="btn w-full">Load from File</button>
+                <input type="file" id="start-load-input" class="hidden" accept=".json">
+                <button id="clear-data-btn" class="text-xs text-gray-500 hover:text-red-400 text-center w-full pt-2">Clear All Local Data</button>
             </div>
         </div>
 
@@ -916,14 +918,21 @@ ${playerAction}
     }
 
     /**
-     * Handles the logic for loading a game from a file.
+     * Handles the logic for loading a game from a file from the settings modal.
      */
     function loadGameFromFile() {
         if (!fileToLoad) {
             showUIMessage("No file selected to load.");
             return;
         }
-
+        handleFileLoad(fileToLoad);
+    }
+    
+    /**
+     * Universal file reader and game state loader.
+     * @param {File} file - The file object to read.
+     */
+    function handleFileLoad(file) {
         const reader = new FileReader();
         reader.onload = function(event) {
             try {
@@ -938,9 +947,9 @@ ${playerAction}
         reader.onerror = function() {
             showUIMessage('Error reading the selected file.');
         };
-        reader.readAsText(fileToLoad);
+        reader.readAsText(file);
     }
-    
+
     /**
      * Loads the game from a validated gameState object.
      * @param {object} loadedData - The parsed gameState object from a save file.
@@ -951,7 +960,6 @@ ${playerAction}
             document.getElementById('story-content').innerHTML = '';
             const lastEvent = gameState.worldState.majorEvents?.[gameState.worldState.majorEvents.length - 1] || "your journey";
             startGame(`Game loaded. You continue ${lastEvent}.`);
-            // Close the settings modal after a successful load
             document.getElementById('settings-modal').classList.add('hidden');
         } else {
             throw new Error('Invalid save file structure.');
@@ -959,7 +967,6 @@ ${playerAction}
     }
     
     function clearLocalStorage() {
-        // Bypassing confirm for a smoother experience in this environment
         localStorage.removeItem('rpgGameState');
         localStorage.removeItem('rpgApiKey');
         document.getElementById('api-key-input').value = '';
@@ -994,7 +1001,7 @@ ${playerAction}
     }
 
     /**
-     * Handles file selection and updates the UI.
+     * Handles file selection from the settings modal's drop zone.
      * @param {File} file - The file selected by the user.
      */
     function handleFileSelect(file) {
@@ -1025,13 +1032,27 @@ ${playerAction}
                 if (setApiKey()) loadGameFromLocalStorage();
             });
             document.getElementById('new-game-btn').addEventListener('click', () => {
-                // REMOVED window.confirm to prevent silent failures.
                 if (setApiKey()) {
-                    showUIMessage('Starting a new game will clear any autosaved progress.', 'success');
                     showSetupModal();
                 }
             });
             document.getElementById('clear-data-btn').addEventListener('click', clearLocalStorage);
+            
+            const loadFromFileStartBtn = document.getElementById('load-from-file-start-btn');
+            const startLoadInput = document.getElementById('start-load-input');
+            
+            loadFromFileStartBtn.addEventListener('click', () => {
+                if(setApiKey()) {
+                    startLoadInput.click();
+                }
+            });
+
+            startLoadInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    handleFileLoad(e.target.files[0]);
+                }
+            });
+
 
             // Creation Modal Navigation
             document.getElementById('next-btn').addEventListener('click', () => navigateCreation(1));
@@ -1053,11 +1074,11 @@ ${playerAction}
             document.getElementById('settings-cancel-btn').addEventListener('click', () => document.getElementById('settings-modal').classList.add('hidden'));
             document.getElementById('return-to-start-btn').addEventListener('click', () => window.location.reload());
             
-            // New Save/Load Button Listeners
+            // Settings Save/Load Button Listeners
             document.getElementById('save-file-btn').addEventListener('click', saveGameToFile);
             document.getElementById('load-file-btn').addEventListener('click', loadGameFromFile);
 
-            // Drag and Drop Listeners
+            // Settings Drag and Drop Listeners
             const dropZone = document.getElementById('drop-zone-label');
             dropZone.addEventListener('dragover', (e) => {
                 e.preventDefault();
@@ -1092,8 +1113,3 @@ ${playerAction}
     </script>
 </body>
 </html>
-```
-
-With the corrected `Scenario.json` and this cleaned-up `index.html`, the application's logic is sound. If it still fails to launch, the cause is almost certainly external to the code itself. The most common culprit is browser caching, where it's still using an old version of one of the files.
-
-If the problem persists after updating the file and clearing your browser cache, I will need you to open the browser's developer console (usually by pressing F12), try to create a character, and then copy and paste the exact error message that appears in the console. That will tell me precisely where the failure is occurri
