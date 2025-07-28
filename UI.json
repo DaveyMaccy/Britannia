@@ -27,17 +27,11 @@
                     { "tag": "h3", "className": "font-title text-xl panel-header text-center mb-2", "innerHTML": "Backup & Transfer" },
                     {
                       "tag": "div",
-                      "className": "space-y-2",
+                      "className": "flex gap-2",
                       "children": [
-                        { "tag": "textarea", "id": "save-load-data", "className": "w-full bg-black text-xs rounded p-2 h-24 resize-none border border-gray-700", "placeholder": "Save or load your game code here..." },
-                        {
-                          "tag": "div",
-                          "className": "flex gap-2",
-                          "children": [
-                            { "tag": "button", "id": "save-btn", "className": "w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors", "innerHTML": "Save" },
-                            { "tag": "button", "id": "load-btn", "className": "w-1/2 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors", "innerHTML": "Load" }
-                          ]
-                        }
+                        { "tag": "button", "id": "save-btn", "className": "w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors", "innerHTML": "Download Save" },
+                        { "tag": "label", "for": "load-file-input", "className": "w-1/2 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors text-center cursor-pointer", "innerHTML": "Upload Save" },
+                        { "tag": "input", "type": "file", "id": "load-file-input", "className": "hidden", "accept": ".json" }
                       ]
                     }
                   ]
@@ -118,7 +112,7 @@
       "children": [
         {
           "tag": "div",
-          "className": "bg-gray-800 p-8 rounded-lg max-w-md w-full text-white text-center",
+          "className": "modal-content p-8 rounded-lg max-w-md w-full text-white text-center",
           "children": [
             { "tag": "h1", "className": "font-title text-5xl text-yellow-400 mb-4", "innerHTML": "Britannia 60 AD" },
             { "tag": "p", "className": "mb-6", "innerHTML": "To play, please enter your Gemini API Key. It will be saved locally in your browser and will not be shared." },
@@ -137,7 +131,7 @@
       "children": [
         {
           "tag": "div",
-          "className": "bg-gray-800 p-8 rounded-lg max-w-4xl w-full text-white",
+          "className": "modal-content p-8 rounded-lg max-w-4xl w-full text-white",
           "children": [
             { "tag": "h2", "className": "font-title text-3xl mb-4 text-yellow-400 text-center", "innerHTML": "Character Creation" },
             {
@@ -177,7 +171,7 @@
       "children": [
         {
           "tag": "div",
-          "className": "bg-gray-800 p-8 rounded-lg max-w-lg w-full text-white",
+          "className": "modal-content p-8 rounded-lg max-w-lg w-full text-white",
           "children": [
             { "tag": "h2", "className": "font-title text-3xl mb-6 text-yellow-400", "innerHTML": "Settings" },
             {
