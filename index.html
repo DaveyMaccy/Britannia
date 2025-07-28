@@ -110,6 +110,12 @@
             background-color: #065f46; /* green-800 */
             border: 2px solid #34d399; /* green-400 */
         }
+        /* Canvas placeholder styles */
+        .canvas-placeholder {
+            background-color: #1a1a1a;
+            border: 2px solid #5a4a3a;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body class="bg-black text-gray-300">
@@ -219,15 +225,22 @@
         <!-- Main Application Container -->
         <div id="app-container" class="hidden h-screen w-screen p-4 flex flex-col md:flex-row gap-4">
             <!-- Left Panel: Story -->
-            <div class="flex-grow flex flex-col h-1/2 md:h-full md:w-2/3 panel">
-                <div class="panel-header p-2 text-center text-lg">Story Log</div>
-                <div id="story-container" class="flex-grow p-4 overflow-y-auto">
-                    <div id="story-content"></div>
+            <div class="flex-grow flex flex-col h-1/2 md:h-full md:w-2/3 panel p-4 space-y-4">
+                <!-- Scene Canvas Container -->
+                <div id="scene-canvas-container" class="aspect-video w-full canvas-placeholder">
+                    <canvas id="scene-canvas" class="w-full h-full rounded-sm"></canvas>
                 </div>
-                <form id="action-form" class="p-2 border-t-4 border-black flex gap-2">
-                    <input type="text" id="action-input" class="flex-grow" placeholder="What do you do?">
-                    <button type="submit" class="btn">Send</button>
-                </form>
+                <!-- Story Log Container -->
+                <div class="flex-grow flex flex-col min-h-0">
+                    <div class="panel-header p-2 text-center text-lg">Story Log</div>
+                    <div id="story-container" class="flex-grow p-4 overflow-y-auto bg-black bg-opacity-20">
+                        <div id="story-content"></div>
+                    </div>
+                    <form id="action-form" class="p-2 border-t-4 border-black flex gap-2">
+                        <input type="text" id="action-input" class="flex-grow" placeholder="What do you do?">
+                        <button type="submit" class="btn">Send</button>
+                    </form>
+                </div>
             </div>
             <!-- Right Panel: Character Info -->
             <div class="h-1/2 md:h-full md:w-1/3 flex flex-col panel">
@@ -625,6 +638,11 @@
 
         display.innerHTML = `
             <div class="space-y-4 text-sm">
+                <!-- Character Sprite Canvas -->
+                <div id="sprite-canvas-container" class="w-full h-48 mb-4 canvas-placeholder">
+                    <canvas id="sprite-canvas" class="w-full h-full"></canvas>
+                </div>
+
                 <div><h3 class="font-title text-xl text-yellow-400">${pc.name}</h3><p class="text-xs italic text-gray-400">${pc.physicalDescription}</p></div>
                 <div><p><strong>Health:</strong> <span class="text-green-400">${pc.health}</span></p><p><strong>Status:</strong> ${pc.survivalStatus}</p></div>
                 
@@ -1112,4 +1130,4 @@ ${playerAction}
 
     </script>
 </body>
-</html>
+</ht
