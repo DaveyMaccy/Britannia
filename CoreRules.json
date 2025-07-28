@@ -73,7 +73,7 @@
         "title": "Character Creation",
         "points": [
           "Attributes: The app will automatically roll `5d20` to determine the starting value for each of the four attributes. The player's choice of a 'strongest attribute' will add a `+25` bonus to the result of that roll (or no bonus if 'None' is chosen).",
-          "Skills: All skills are rated from 1-100. The app will automatically roll dice to determine their starting values. The 'core skills' chosen by the player (0 to 3) start with a value of `3d20 + 25`. All other skills from the scenario's list start with a base value of `3d20`.",
+          "Skills: All skills are rated from 1-100. The app will automatically roll dice to determine their starting values. The 'core skills' chosen by the player (0 to 3) start with a value of `3d20 + 25`. All other scenario skills start with a base value of `3d20`.",
           "Appearance: The player provides a physical description during creation.",
           "Languages: The player chooses their starting language fluency during creation.",
           "Inventory: The player's starting inventory is determined by their choices during character creation."
