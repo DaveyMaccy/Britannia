@@ -66,6 +66,7 @@
         let apiKey = '';
         let coreRulesText = '';
         let scenarioData = {};
+        let uiData = {};
         let creationPage = 1;
 
         // --- ALL FUNCTION DEFINITIONS (DEFINED FIRST TO PREVENT ERRORS) ---
@@ -105,6 +106,10 @@
             const scenarioResponse = await fetch('./Scenario.json');
             if (!scenarioResponse.ok) throw new Error('Could not load Scenario.json');
             scenarioData = await scenarioResponse.json();
+
+            const uiResponse = await fetch('./UI.json');
+            if (!uiResponse.ok) throw new Error('Could not load UI.json');
+            uiData = await uiResponse.json();
         }
 
         function buildElement(config) {
@@ -125,10 +130,10 @@
             return el;
         }
         
-        function buildUIFromJSON(uiConfig) {
+        function buildUIFromJSON() {
             const root = document.getElementById('root');
             root.innerHTML = ''; // Clear any existing content (like the loading screen)
-            uiConfig.forEach(config => root.appendChild(buildElement(config)));
+            uiData.layout.forEach(config => root.appendChild(buildElement(config)));
         }
 
         function initializeStartScreen() {
