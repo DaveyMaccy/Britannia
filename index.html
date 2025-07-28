@@ -146,17 +146,17 @@
                         <div id="creation-page-1">
                             <h3 class="font-title text-xl text-yellow-400 border-b border-gray-600 mb-2">Appearance</h3>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2">
-                                <div><label for="char-name">Name</label><input type="text" id="char-name" placeholder="Character Name"></div>
-                                <div><label for="char-gender">Gender</label><select id="char-gender"><option>Male</option><option>Female</option></select></div>
-                                <div><label for="char-height">Height</label><input type="text" id="char-height" placeholder="e.g., 5'10&quot;"></div>
-                                <div><label for="char-weight">Weight (lbs)</label><input type="text" id="char-weight" placeholder="e.g., 170"></div>
-                                <div><label for="char-build">Build</label><select id="char-build"><option>Body 1</option><option>Body 2</option><option>Body 3</option></select></div>
-                                <div><label for="char-skin">Skin Tone</label><select id="char-skin"><option>Light</option><option>Tan</option><option>Dark</option></select></div>
-                                <div><label for="char-hair-style">Hair Style</label><select id="char-hair-style"><option>None</option><option>Short</option><option>Medium</option><option>Long</option></select></div>
-                                <div><label for="char-hair-color">Hair Color</label><select id="char-hair-color"><option>Blonde</option><option>Red</option><option>Brown</option><option>Grey</option><option>Black</option></select></div>
-                                <div><label for="char-eye-color">Eye Color</label><select id="char-eye-color"><option>Blue</option><option>Green</option><option>Hazel</option><option>Brown</option></select></div>
+                                <div><label for="char-name" class="text-sm text-gray-400">Name</label><input type="text" id="char-name" placeholder="An Unknown Wanderer"></div>
+                                <div><label for="char-gender" class="text-sm text-gray-400">Gender</label><select id="char-gender"><option>Male</option><option>Female</option></select></div>
+                                <div><label for="char-height" class="text-sm text-gray-400">Height</label><input type="text" id="char-height" placeholder="Average"></div>
+                                <div><label for="char-weight" class="text-sm text-gray-400">Weight (lbs)</label><input type="text" id="char-weight" placeholder="Average"></div>
+                                <div><label for="char-build" class="text-sm text-gray-400">Build</label><select id="char-build"><option>Body 1</option><option>Body 2</option><option>Body 3</option></select></div>
+                                <div><label for="char-skin" class="text-sm text-gray-400">Skin Tone</label><select id="char-skin"><option>Light</option><option>Tan</option><option>Dark</option></select></div>
+                                <div><label for="char-hair-style" class="text-sm text-gray-400">Hair Style</label><select id="char-hair-style"><option>None</option><option>Short</option><option>Medium</option><option>Long</option></select></div>
+                                <div><label for="char-hair-color" class="text-sm text-gray-400">Hair Color</label><select id="char-hair-color"><option>Blonde</option><option>Red</option><option>Brown</option><option>Grey</option><option>Black</option></select></div>
+                                <div><label for="char-eye-color" class="text-sm text-gray-400">Eye Color</label><select id="char-eye-color"><option>Blue</option><option>Green</option><option>Hazel</option><option>Brown</option></select></div>
                             </div>
-                             <div class="mt-4"><label for="char-details">Distinguishing Features</label><textarea id="char-details" placeholder="Scars, tattoos, etc..." class="w-full h-24"></textarea></div>
+                             <div class="mt-4"><label for="char-details" class="text-sm text-gray-400">Distinguishing Features</label><textarea id="char-details" placeholder="Scars, tattoos, etc... (or leave blank)" class="w-full h-24"></textarea></div>
                         </div>
                         <!-- Page 2: Attributes & Skills -->
                         <div id="creation-page-2" class="hidden">
@@ -468,23 +468,12 @@
      * @param {number} direction - 1 for next, -1 for previous.
      */
     function navigateCreation(direction) {
-        // Validation before moving forward from a page
-        if (direction > 0) {
-            if (creationPage === 1) {
-                const name = document.getElementById('char-name').value;
-                const height = document.getElementById('char-height').value;
-                const weight = document.getElementById('char-weight').value;
-                if (!name || !height || !weight) {
-                    showUIMessage('Please complete all fields on this page to continue.');
-                    return; // Stop navigation
-                }
-            }
-            if (creationPage === 2) {
-                const checkedCount = document.querySelectorAll('.skill-checkbox:checked').length;
-                if (checkedCount > 3) {
-                    showUIMessage('You can select a maximum of 3 core skills.');
-                    return; // Stop navigation
-                }
+        // Validation for skill count when leaving page 2
+        if (direction > 0 && creationPage === 2) {
+            const checkedCount = document.querySelectorAll('.skill-checkbox:checked').length;
+            if (checkedCount > 3) {
+                showUIMessage('You can select a maximum of 3 core skills.');
+                return; // Stop navigation
             }
         }
 
@@ -504,31 +493,28 @@
     function createCharacter() {
         let newGameState = {};
         
-        // Collect data from form
-        const name = document.getElementById('char-name').value;
+        // Collect data from form, providing defaults for blank text fields
+        const name = document.getElementById('char-name').value.trim() || "An Unknown Wanderer";
         const gender = document.getElementById('char-gender').value;
-        const height = document.getElementById('char-height').value;
-        const weight = document.getElementById('char-weight').value;
+        const height = document.getElementById('char-height').value.trim() || "Average";
+        const weight = document.getElementById('char-weight').value.trim() || "Average";
         const build = document.getElementById('char-build').value;
         const skin = document.getElementById('char-skin').value;
         const hairStyle = document.getElementById('char-hair-style').value;
         const hairColor = document.getElementById('char-hair-color').value;
         const eyeColor = document.getElementById('char-eye-color').value;
-        const details = document.getElementById('char-details').value;
+        const details = document.getElementById('char-details').value.trim() || "No distinguishing features noted.";
         const bonusAttr = document.getElementById('attr-bonus').value;
         const selectedSkills = Array.from(document.querySelectorAll('.skill-checkbox:checked')).map(cb => cb.value);
         const brittonicFluency = parseInt(document.getElementById('lang-brittonic').value, 10);
         const latinFluency = parseInt(document.getElementById('lang-latin').value, 10);
         const terminatorMode = document.getElementById('terminator-mode').checked;
-        const selectedGear = terminatorMode ? [] : Array.from(document.querySelectorAll('.gear-checkbox:checked')).map(cb => cb.value);
-        const startLocation = document.querySelector('input[name="start-location"]:checked').value;
         
-        // Final validation check (should already be passed by navigateCreation, but good practice)
-        if (!name || !height || !weight) {
-            showUIMessage('Please ensure all fields on Page 1 (Appearance) are complete.');
-            navigateCreation(1 - creationPage); // Go back to page 1
-            return;
-        }
+        // Determine gear. If terminator mode is off and no items are checked, it's still terminator mode.
+        const gearCheckboxes = document.querySelectorAll('.gear-checkbox:checked');
+        const selectedGear = (terminatorMode || gearCheckboxes.length === 0) ? [] : Array.from(gearCheckboxes).map(cb => cb.value);
+
+        const startLocation = document.querySelector('input[name="start-location"]:checked').value;
 
         const physicalDescription = `Gender: ${gender}. ${height}, ${weight} lbs, ${build} build. ${hairColor} ${hairStyle} hair, ${eyeColor} eyes, and ${skin} skin. ${details}`;
         
@@ -1039,12 +1025,7 @@ ${playerAction}
                 if (setApiKey()) loadGameFromLocalStorage();
             });
             document.getElementById('new-game-btn').addEventListener('click', () => {
-                const hasValidSave = localStorage.getItem('rpgGameState') !== null;
-                if (hasValidSave) {
-                    if (window.confirm('Starting a new game will delete your previous locally stored game files. Are you sure?')) {
-                         if (setApiKey()) showSetupModal();
-                    }
-                } else {
+                if (window.confirm('Starting a new game will delete any previous locally stored game files. Are you sure?')) {
                     if (setApiKey()) showSetupModal();
                 }
             });
