@@ -1,0 +1,205 @@
+{
+  "layout": [
+    {
+      "tag": "div",
+      "id": "app-container",
+      "className": "flex flex-col md:flex-row h-screen hidden",
+      "children": [
+        {
+          "tag": "aside",
+          "className": "w-full md:w-1/4 panel flex flex-col h-[40vh] md:h-screen",
+          "children": [
+            {
+              "tag": "div",
+              "className": "flex-grow overflow-y-auto p-4",
+              "children": [
+                { "tag": "h2", "className": "font-title text-2xl panel-header text-center mb-4", "innerHTML": "Game State" },
+                { "tag": "div", "id": "game-state-display" }
+              ]
+            },
+            {
+              "tag": "div",
+              "className": "mt-auto p-4 border-t-2 border-black space-y-4",
+              "children": [
+                {
+                  "tag": "div",
+                  "children": [
+                    { "tag": "h3", "className": "font-title text-xl panel-header text-center mb-2", "innerHTML": "Backup & Transfer" },
+                    {
+                      "tag": "div",
+                      "className": "space-y-2",
+                      "children": [
+                        { "tag": "textarea", "id": "save-load-data", "className": "w-full bg-black text-xs rounded p-2 h-24 resize-none border border-gray-700", "placeholder": "Save or load your game code here..." },
+                        {
+                          "tag": "div",
+                          "className": "flex gap-2",
+                          "children": [
+                            { "tag": "button", "id": "save-btn", "className": "w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors", "innerHTML": "Save" },
+                            { "tag": "button", "id": "load-btn", "className": "w-1/2 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition-colors", "innerHTML": "Load" }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "tag": "div",
+                  "children": [
+                    { "tag": "button", "id": "settings-btn", "className": "w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-colors", "innerHTML": "Settings" }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "main",
+          "className": "w-full md:w-1/2 flex flex-col h-[60vh] md:h-screen bg-black order-first md:order-none",
+          "children": [
+            {
+              "tag": "div",
+              "id": "visuals-container",
+              "className": "w-full h-1/3 bg-black border-b-4 border-black flex items-center justify-center",
+              "children": [
+                { "tag": "canvas", "id": "scene-canvas", "className": "w-full h-full" }
+              ]
+            },
+            {
+              "tag": "div",
+              "id": "story-container",
+              "className": "flex-grow p-6 overflow-y-auto h-2/3 bg-[#1d1d1d]",
+              "children": [
+                { "tag": "div", "id": "story-content", "className": "text-lg leading-relaxed" }
+              ]
+            },
+            {
+              "tag": "div",
+              "className": "p-4 bg-[#2e2820] border-t-4 border-black",
+              "children": [
+                {
+                  "tag": "form",
+                  "id": "action-form",
+                  "className": "flex items-center gap-4",
+                  "children": [
+                    { "tag": "input", "type": "text", "id": "action-input", "className": "w-full bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-yellow-400", "placeholder": "What do you do?" },
+                    { "tag": "button", "type": "submit", "className": "bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-2 px-4 rounded-lg transition-colors", "innerHTML": "Send" }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "tag": "aside",
+          "className": "w-full md:w-1/4 panel p-4 overflow-y-auto h-[40vh] md:h-screen",
+          "children": [
+            {
+              "tag": "div",
+              "className": "flex border-b-2 border-gray-700 mb-4",
+              "children": [
+                { "tag": "div", "id": "tab-character", "className": "sidebar-tab active", "innerHTML": "Character" },
+                { "tag": "div", "id": "tab-known-characters", "className": "sidebar-tab", "innerHTML": "Known NPCs" },
+                { "tag": "div", "id": "tab-factions", "className": "sidebar-tab", "innerHTML": "Factions" },
+                { "tag": "div", "id": "tab-console", "className": "sidebar-tab", "innerHTML": "Console" }
+              ]
+            },
+            { "tag": "div", "id": "character-panel", "className": "overflow-y-auto h-full" },
+            { "tag": "div", "id": "known-characters-panel", "className": "overflow-y-auto h-full hidden" },
+            { "tag": "div", "id": "factions-panel", "className": "overflow-y-auto h-full hidden" },
+            { "tag": "div", "id": "console-panel", "className": "overflow-y-auto h-full hidden text-xs font-mono" }
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "div",
+      "id": "start-modal",
+      "className": "fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50",
+      "children": [
+        {
+          "tag": "div",
+          "className": "bg-gray-800 p-8 rounded-lg max-w-md w-full text-white text-center",
+          "children": [
+            { "tag": "h1", "className": "font-title text-5xl text-yellow-400 mb-4", "innerHTML": "Britannia 60 AD" },
+            { "tag": "p", "className": "mb-6", "innerHTML": "To play, please enter your Gemini API Key. It will be saved locally in your browser and will not be shared." },
+            { "tag": "div", "className": "mb-4", "children": [{ "tag": "input", "type": "password", "id": "api-key-input", "className": "w-full bg-gray-700 rounded px-3 py-2 text-center", "placeholder": "Enter your Gemini API Key" }] },
+            { "tag": "button", "id": "continue-game-btn", "className": "w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors mb-4 disabled:bg-gray-600 disabled:cursor-not-allowed", "innerHTML": "Continue Game" },
+            { "tag": "button", "id": "new-game-btn", "className": "w-full bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-3 px-4 rounded-lg transition-colors", "innerHTML": "New Game" },
+            { "tag": "div", "className": "mt-6", "children": [{ "tag": "a", "href": "#", "id": "clear-data-btn", "className": "text-xs text-gray-500 hover:text-red-400 underline", "innerHTML": "Clear all local data (API Key & Saved Game)" }] }
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "div",
+      "id": "setup-modal",
+      "className": "fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden overflow-y-auto p-4",
+      "children": [
+        {
+          "tag": "div",
+          "className": "bg-gray-800 p-8 rounded-lg max-w-4xl w-full text-white",
+          "children": [
+            { "tag": "h2", "className": "font-title text-3xl mb-4 text-yellow-400 text-center", "innerHTML": "Character Creation" },
+            {
+              "tag": "div",
+              "className": "flex flex-col md:flex-row gap-6",
+              "children": [
+                {
+                  "tag": "div",
+                  "className": "w-full md:w-2/3",
+                  "children": [
+                    { "tag": "div", "id": "creation-page-1", "className": "creation-page" },
+                    { "tag": "div", "id": "creation-page-2", "className": "creation-page hidden" },
+                    { "tag": "div", "id": "creation-page-3", "className": "creation-page hidden" },
+                    { "tag": "div", "id": "creation-page-4", "className": "creation-page hidden" }
+                  ]
+                },
+                { "tag": "div", "className": "w-full md:w-1/3 info-box p-4 rounded-lg mt-4 md:mt-0", "children": [{ "tag": "div", "id": "info-box-content" }] }
+              ]
+            },
+            {
+              "tag": "div",
+              "className": "mt-6 flex justify-between",
+              "children": [
+                { "tag": "button", "id": "prev-btn", "className": "bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg transition-colors hidden", "innerHTML": "Back" },
+                { "tag": "button", "id": "next-btn", "className": "bg-yellow-500 hover:bg-yellow-600 text-gray-900 font-bold py-2 px-6 rounded-lg transition-colors ml-auto", "innerHTML": "Next" },
+                { "tag": "button", "id": "create-char-btn", "className": "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-colors ml-auto hidden", "innerHTML": "Begin Journey" }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tag": "div",
+      "id": "settings-modal",
+      "className": "fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden",
+      "children": [
+        {
+          "tag": "div",
+          "className": "bg-gray-800 p-8 rounded-lg max-w-lg w-full text-white",
+          "children": [
+            { "tag": "h2", "className": "font-title text-3xl mb-6 text-yellow-400", "innerHTML": "Settings" },
+            {
+              "tag": "div",
+              "className": "space-y-4",
+              "children": [
+                { "tag": "div", "children": [{ "tag": "label", "for": "settings-api-key", "className": "block mb-2", "innerHTML": "API Key:" }, { "tag": "input", "type": "password", "id": "settings-api-key", "className": "w-full bg-gray-700 rounded px-3 py-2" }] },
+                { "tag": "div", "children": [{ "tag": "label", "for": "settings-char-desc", "className": "block mb-2", "innerHTML": "Edit Character Appearance:" }, { "tag": "textarea", "id": "settings-char-desc", "className": "w-full bg-gray-700 rounded px-3 py-2", "rows": "4" }] },
+                { "tag": "div", "children": [{ "tag": "button", "id": "return-to-start-btn", "className": "w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg transition-colors", "innerHTML": "Return to Start Screen (Lose Unsaved Progress)" }] }
+              ]
+            },
+            {
+              "tag": "div",
+              "className": "mt-6 flex justify-end gap-4",
+              "children": [
+                { "tag": "button", "id": "settings-cancel-btn", "className": "bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-6 rounded-lg transition-colors", "innerHTML": "Cancel" },
+                { "tag": "button", "id": "settings-apply-btn", "className": "bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-colors", "innerHTML": "Apply & Close" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
