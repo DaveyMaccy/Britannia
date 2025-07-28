@@ -66,7 +66,6 @@
         let apiKey = '';
         let coreRulesText = '';
         let scenarioData = {};
-        let uiData = {};
         let creationPage = 1;
 
         // --- ALL FUNCTION DEFINITIONS (DEFINED FIRST TO PREVENT ERRORS) ---
@@ -99,45 +98,13 @@
         }
         
         async function loadGameData() {
-            try {
-                const rulesResponse = await fetch('./CoreRules.json');
-                if (!rulesResponse.ok) throw new Error('FILE_LOAD_ERROR: Could not load CoreRules.json');
-                coreRulesText = await rulesResponse.text();
+            const rulesResponse = await fetch('./CoreRules.json');
+            if (!rulesResponse.ok) throw new Error('Could not load CoreRules.json');
+            coreRulesText = await rulesResponse.text();
 
-                const scenarioResponse = await fetch('./Scenario.json');
-                if (!scenarioResponse.ok) throw new Error('FILE_LOAD_ERROR: Could not load Scenario.json');
-                scenarioData = await scenarioResponse.json();
-
-                const uiResponse = await fetch('./UI.json');
-                if (!uiResponse.ok) throw new Error('FILE_LOAD_ERROR: Could not load UI.json');
-                uiData = await uiResponse.json();
-            } catch (error) {
-                throw error; // Re-throw to be caught by the main error handler
-            }
-        }
-
-        function buildElement(config) {
-            const el = document.createElement(config.tag);
-            if (config.id) el.id = config.id;
-            if (config.className) el.className = config.className;
-            if (config.type) el.type = config.type;
-            if (config.placeholder) el.placeholder = config.placeholder;
-            if (config.name) el.name = config.name;
-            if (config.value) el.value = config.value;
-            if (config.checked) el.checked = true;
-            if (config.innerHTML) el.innerHTML = config.innerHTML;
-            if (config.children) {
-                config.children.forEach(childConfig => {
-                    el.appendChild(buildElement(childConfig));
-                });
-            }
-            return el;
-        }
-        
-        function buildUIFromJSON() {
-            const root = document.getElementById('root');
-            root.innerHTML = ''; // Clear any existing content (like the loading screen)
-            uiData.layout.forEach(config => root.appendChild(buildElement(config)));
+            const scenarioResponse = await fetch('./Scenario.json');
+            if (!scenarioResponse.ok) throw new Error('Could not load Scenario.json');
+            scenarioData = await scenarioResponse.json();
         }
 
         function initializeStartScreen() {
